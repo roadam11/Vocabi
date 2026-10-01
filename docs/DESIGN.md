@@ -41,7 +41,7 @@ Direction: "an expensive book, not a game". Calm, typographic, one accent color,
 - `prefers-reduced-motion: reduce` → no transforms, no flips; fades ≤ 100ms.
 
 ## Core components (`src/components/ds/`)
-`Button` (primary/secondary/ghost/danger, loading state), `Card`, `Chip`, `ProgressBar` (thin, top of session), `MasteryRing` (3 segments: recognition/context/production; the signature element), `WordCard` (headword in serif, POS chip, audio button, Hebrew meaning, example), `ChoiceList` (MCQ with keyboard 1-4 and full a11y), `AnswerInput` (production layer, with "I don't know"), `Sheet` (bottom sheet with focus trap, Esc closes), `Toast`, `ExamCountdown`, `Stat`, `EmptyState`, `En`.
+`Button` (primary/secondary/ghost/danger, loading state), `Card`, `Chip`, `ProgressBar` (thin, top of session), `MasteryRing` (the signature element; per-sense variant renders 1-3 segments — exactly the sense's required layers, fixed order recognition→context→production, never a fixed 3 with greyed-out slots; aggregate variant on `/session/done` and `/progress` always shows 3 segments = share of all senses requiring+passing that layer; every ring ships a text alternative via `aria-label`, never color-only — `docs/DECISIONS.md` #2), `WordCard` (headword in serif, POS chip, audio button, Hebrew meaning, example), `ChoiceList` (MCQ with keyboard 1-4 and full a11y), `AnswerInput` (production layer, with "I don't know"), `Sheet` (bottom sheet with focus trap, Esc closes), `Toast`, `ExamCountdown`, `Stat`, `EmptyState`, `En`.
 Each component: all states (default, hover, focus-visible, active, disabled, loading, error), light + dark, shown on `/design`.
 
 ## Layout

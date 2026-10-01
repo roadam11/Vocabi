@@ -67,7 +67,7 @@ Milestone M3. Read docs/CONTENT.md fully.
 Implement:
 - src/content/schema.ts with Zod schemas for Sense, Track, PlacementItem, Pseudoword, and inferred types.
 - Typed loaders in src/content/ that load only verified senses (and devOnly fixtures only in development).
-- scripts/content/check.ts behind `pnpm content:check`: every error and warning rule in CONTENT.md, output as `file › id › RULE_CODE › message`, exit 1 on any error.
+- scripts/content/check.ts behind `pnpm content:check`: every error and warning rule in CONTENT.md, output as `file › id › RULE_CODE › message`, exit 1 on any error. Includes the distractor-only lexicon (`content/lexicon/distractors.json`) as a source of recognition-MCQ candidates, and treats "fewer than 3 eligible recognition distractors" for a shipping sense as an ERROR, not a warning (docs/DECISIONS.md #3).
 - Fixtures: 20 dev senses (devOnly: true, verified) and, for EACH rule, one failing fixture plus a test asserting that exact rule fires and nothing else.
 
 Edge cases: Hebrew text with niqqud, maqaf and gershayim; Latin letters inside parentheses in Hebrew text (still an error if touching Hebrew letters); multi-word lemmas ("get along with"); answers with hyphen/space variants; cloze with two "___" or none; duplicate ids across files.
@@ -115,7 +115,7 @@ Implement:
 - scripts/content/generate.ts: input CSV (lemma, senseHint, band, track) → Anthropic Message Batches API → draft Sense JSON. Model from ANTHROPIC_MODEL, key from ANTHROPIC_API_KEY (read from .env.local, never committed). The generation prompt lives in scripts/content/prompts/sense.md and embeds the Translation standard verbatim. Validate each result with the Zod schema; retry invalid items at most 2 times; write failures to a log file. Support --dry-run (prints requests, no API call) and resumes a batch by id.
 - scripts/content/export-review.ts → review/<date>.csv, UTF-8 with BOM, columns from CONTENT.md.
 - scripts/content/import-review.ts: applies approve/fix/reject, sets verification fields; refuses rows whose id is unknown or whose edited Hebrew violates validator rules.
-- scripts/content/pseudowords.ts: generates candidate pseudowords and rejects any that exist in the reference word list or as inflections.
+- scripts/content/pseudowords.ts: generates candidate pseudowords and rejects any that exist in the reference word list or as inflections, any with length outside 7-10 characters, and any within Damerau-Levenshtein distance ≤2 of a word/inflection among the top ~20,000 most frequent English words (not the full lexicon — checking against every word would reject almost every candidate) (docs/DECISIONS.md #7).
 
 Edge cases: CSV fields with commas, quotes and Hebrew; Excel re-saving the CSV (BOM, CRLF); partial batch failures; rate limits (backoff); re-running generation must not overwrite verified records.
 

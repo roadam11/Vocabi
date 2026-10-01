@@ -12,12 +12,12 @@ Read on demand (do NOT load all at once):
 - `docs/ROADMAP.md` — milestones and acceptance criteria
 
 ## Stack
-- Next.js (App Router) + TypeScript `strict`, pnpm, Tailwind CSS
+- Next.js 16 (App Router) + TypeScript `strict`, pnpm, Tailwind CSS v4. Target current major versions, not older tutorials: Next 16's `params`/`searchParams`/`cookies()`/`headers()` are fully async with no sync shim, Turbopack is the default bundler, and routing middleware is `proxy.ts` (not `middleware.ts`). Tailwind v4 is CSS-first (`@import "tailwindcss";` + `@tailwindcss/postcss`), not a `tailwind.config.js`-primary setup. See `docs/DECISIONS.md` #16-17.
 - Vitest (unit), Playwright (e2e + screenshots), ESLint + Prettier
-- Phase 0: progress stored locally behind the `ProgressStore` interface; Supabase only for the waitlist table
-- Phase 1: Supabase (Postgres + RLS + anonymous auth) replaces the local store
-- Spaced repetition: `ts-fsrs` (read its README before using its API; do not guess signatures)
-- Analytics: PostHog (events listed in `docs/PRODUCT.md`)
+- Phase 0: progress stored locally behind the `ProgressStore` interface (built migratable from day one — see `docs/ENGINE.md` §7); Supabase only for the waitlist table
+- Phase 1: Supabase (Postgres + RLS + anonymous auth) replaces the local store. Anonymous Supabase users hold the full `authenticated` Postgres role — RLS must branch on the `is_anonymous` JWT claim, never on role (`docs/DECISIONS.md` #8, #21).
+- Spaced repetition: `ts-fsrs` (read its README before using its API; do not guess signatures). Use its built-in default weights via `generatorParameters({ request_retention: 0.90 })` for Phase 0 (`docs/DECISIONS.md` #14, #18).
+- Analytics: PostHog (events listed in `docs/PRODUCT.md`). Initialize via `instrumentation-client.ts` with a dated `defaults` bundle, not a React provider wrapper; EU host (`docs/DECISIONS.md` #20).
 
 ## Commands
 - `pnpm dev` · `pnpm build` · `pnpm lint` · `pnpm typecheck`
