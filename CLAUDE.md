@@ -22,6 +22,7 @@ Read on demand (do NOT load all at once):
 ## Commands
 - `pnpm dev` · `pnpm build` · `pnpm lint` · `pnpm typecheck`
 - `pnpm test` (Vitest) · `pnpm e2e` (Playwright) · `pnpm content:check` (content validator)
+- Pre-commit hook (installed by `pnpm install` via simple-git-hooks): ESLint on staged files + `pnpm typecheck`. Tests stay in CI.
 - Definition of green: `pnpm lint && pnpm typecheck && pnpm test && pnpm content:check && pnpm build` all pass.
 
 ## Non-negotiables

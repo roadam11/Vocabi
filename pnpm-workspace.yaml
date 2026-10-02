@@ -1,3 +1,5 @@
 allowBuilds:
   esbuild: true
   unrs-resolver: true
+  # Hooks are installed by our own "prepare" script, not this package's postinstall.
+  simple-git-hooks: false
