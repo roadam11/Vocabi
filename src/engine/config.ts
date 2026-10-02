@@ -88,3 +88,28 @@ export const MASTERY = {
 
 /** One automatic freeze per rolling window of this many local days (docs/DECISIONS.md #6). */
 export const STREAK = { freezeWindowDays: 7 } as const;
+
+// ---- §7 Session builder and on-track status --------------------------------------------------
+
+export const SESSION = {
+  /** Estimated seconds per item (CALIBRATE). `learn` is the teach card. */
+  itemSeconds: { learn: 20, recognition: 8, context: 15, production: 20 },
+  /** Hard ceiling on any session, extra practice included (docs/DECISIONS.md #13). */
+  hardCapMinutes: 30,
+  /** No new words in the last this-many days before the exam (CALIBRATE). */
+  taperDays: 14,
+  /** Without an (upcoming) exam date, new senses may take this share of the budget (CALIBRATE). */
+  newShareNoExam: 0.4,
+  /** New senses from bands with placement p_b at or above this go verify-first. */
+  verifyFirstMinP: 0.8,
+  /** On-track projection: expected reviews per layer until the exam (CALIBRATE). */
+  reviewsPerLayer: 4,
+  /** On-track hysteresis: trip above / clear below these shares of minutesPerDay (DECISIONS #4). */
+  tripAbove: 1.1,
+  clearBelow: 0.95,
+  /**
+   * Minimum number of other items between two items of the same sense in a session (learn →
+   * first practice, layer → next layer) and before a relearning copy (CALIBRATE).
+   */
+  relearnGap: 3,
+} as const;
