@@ -29,3 +29,28 @@ export function inflections(word: string): string[] {
   }
   return [...out];
 }
+
+/**
+ * Only the regular -s/-es, -ed, -ing forms of a likely base word, for nearWords (docs/DECISIONS.md
+ * #34). Unlike `inflections`, this must not invent words: a junk form within one edit of an
+ * accepted answer would turn a genuine typo into "wrong". So it skips words that already look
+ * inflected (-s, -ed, -ing, -ly) and doubles a final consonant only in one-syllable words
+ * (stop → stopped, but visit → visited). Missing a rare form only means typo tolerance applies.
+ */
+export function regularInflections(word: string): string[] {
+  const w = word.toLowerCase();
+  if (!/^[a-z]+$/.test(w) || /(s|ed|ing|ly)$/.test(w)) return [w];
+  const stem = w.slice(0, -1);
+  const out = new Set([w]);
+  if (/[^aeiou]y$/.test(w)) {
+    out.add(`${stem}ies`).add(`${stem}ied`).add(`${w}ing`);
+  } else if (w.endsWith("e")) {
+    out.add(`${w}s`).add(`${w}d`).add(`${stem}ing`);
+  } else {
+    out.add(/(x|z|ch|sh)$/.test(w) ? `${w}es` : `${w}s`);
+    const oneSyllableCvc = /^[^aeiou]*[aeiou][^aeiouwxy]$/.test(w);
+    const base = oneSyllableCvc ? w + w.at(-1)! : w;
+    out.add(`${base}ed`).add(`${base}ing`);
+  }
+  return [...out];
+}

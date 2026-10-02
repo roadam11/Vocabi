@@ -19,6 +19,7 @@ import {
   Track,
 } from "../../src/content/schema";
 import { inflections } from "./inflect";
+import { computeNearWords, referenceForms } from "./near";
 
 export const ERROR_CODES = [
   "SCHEMA",
@@ -41,6 +42,7 @@ export const ERROR_CODES = [
   "LENGTH_HE_PRIMARY",
   "LENGTH_EXAMPLE_EN",
   "RECOGNITION_DISTRACTORS",
+  "NEAR_WORDS_STALE",
 ] as const;
 export const WARNING_CODES = ["W_GLOSS_COLLISION", "W_CLOZE_INFLECTION"] as const;
 export type RuleCode = (typeof ERROR_CODES)[number] | (typeof WARNING_CODES)[number];
@@ -113,7 +115,7 @@ export function lemmaSlug(lemma: string): string {
 type Parsed<T> = { file: string; index: number; value: T };
 
 export type CheckOptions = {
-  /** Top ~20k English words (content/reference/top20k-en.txt), for rule 9. */
+  /** Top ~20k English words (content/reference/top20k-en.txt), for rules 9 and 12. */
   reference: readonly string[];
 };
 
@@ -368,8 +370,8 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
         ...items.map(({ value: p }) => p.lemma),
       ].flatMap((w) => inflections(normalizeEn(w))),
     );
-    const referenceForms = [...new Set(reference.flatMap((w) => inflections(normalizeEn(w))))];
-    const referenceSet = new Set(referenceForms);
+    const pseudoRefForms = [...new Set(reference.flatMap((w) => inflections(normalizeEn(w))))];
+    const referenceSet = new Set(pseudoRefForms);
     for (const { file, value: p } of pseudos) {
       const t = normalizeEn(p.text);
       const len = codePoints(t);
@@ -385,7 +387,7 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
         error(file, p.id, "PSEUDO_REAL_WORD", `"${p.text}" is a real word or inflection`);
         continue;
       }
-      const near = referenceForms.find(
+      const near = pseudoRefForms.find(
         (w) => damerauLevenshtein(t, w, PSEUDO_MIN_DISTANCE - 1) < PSEUDO_MIN_DISTANCE,
       );
       if (near) {
@@ -462,6 +464,29 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
         target.id,
         "RECOGNITION_DISTRACTORS",
         `${eligible.length} eligible recognition distractors with distinct glosses (${pos(target)}, band ±1); ${MIN_RECOGNITION_DISTRACTORS} required — add lexicon entries${eligible.length ? `; have ${quoteList(eligible.map((c) => c.lemma))}` : ""}`,
+      );
+    }
+  }
+
+  // Rule 12: nearWords is exactly what the reference list gives today (docs/DECISIONS.md #34).
+  if (senses.length > 0) {
+    const forms = referenceForms(reference);
+    for (const { file, value: s } of senses) {
+      const expected = computeNearWords(s, forms);
+      const actual = s.nearWords ?? [];
+      if (expected.join("\n") === actual.join("\n")) continue;
+      const missing = expected.filter((w) => !actual.includes(w));
+      const extra = actual.filter((w) => !expected.includes(w));
+      const parts = [
+        missing.length ? `missing ${quoteList(missing)}` : "",
+        extra.length ? `unexpected ${quoteList(extra)}` : "",
+        !missing.length && !extra.length ? "not sorted" : "",
+      ].filter(Boolean);
+      error(
+        file,
+        s.id,
+        "NEAR_WORDS_STALE",
+        `nearWords out of date (${parts.join("; ")}) — run pnpm content:near-words`,
       );
     }
   }

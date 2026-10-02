@@ -39,6 +39,11 @@ export const Sense = z
     cloze: z.strictObject({ en: text, answerForm: text }).optional(),
     clozeDistractors: z.array(text).optional(),
     answers: z.array(text).min(1),
+    /**
+     * Real words one edit away from an accepted answer, sorted (docs/DECISIONS.md #34). Built by
+     * `pnpm content:near-words`; content:check rule 12 keeps it up to date. Absent means none.
+     */
+    nearWords: z.array(text).optional(),
     collocations: z.array(text).optional(),
     family: z.array(text).optional(),
     synonyms: z.array(text).optional(),

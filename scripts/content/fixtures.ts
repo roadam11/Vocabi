@@ -387,6 +387,30 @@ export const failing: FailingFixture[] = [
       };
     })(),
   },
+  // Rule 12
+  {
+    name: "nearWords missing a real word one edit away (quiet → quite)",
+    code: "NEAR_WORDS_STALE",
+    files: one(
+      sense({
+        id: "quiet.adj.01",
+        lemma: "quiet",
+        pos: "adj",
+        example: { en: "The library is very quiet.", he: "הספרייה שקטה מאוד." },
+        cloze: { en: "Please be ___ during the exam.", answerForm: "quiet" },
+        clozeDistractors: ["ancient", "empty", "reliable"],
+        answers: ["quiet", "quieter", "quietest"],
+        family: ["quietly"],
+        synonyms: [],
+        nearWords: ["quit"],
+      }),
+    ),
+  },
+  {
+    name: "nearWords lists a word that is not one edit away",
+    code: "NEAR_WORDS_STALE",
+    files: one(sense({ nearWords: ["achieve"] })),
+  },
   // Warnings
   {
     name: "two senses in one track share a gloss",
@@ -402,6 +426,7 @@ export const failing: FailingFixture[] = [
           cloze: { en: "Soldiers who ___ their posts are punished.", answerForm: "desert" },
           answers: ["desert", "deserts", "deserted", "deserting"],
           family: ["deserter"],
+          nearWords: ["deserved", "deserving", "dessert", "desserts"],
           synonyms: ["abandon"],
           tracks: ["sample"],
         }),
@@ -530,6 +555,7 @@ export const passing: Fixture[] = [
           cloze: { en: "Soldiers who ___ their posts are punished.", answerForm: "desert" },
           answers: ["desert", "deserts", "deserted", "deserting"],
           family: ["deserter"],
+          nearWords: ["deserved", "deserving", "dessert", "desserts"],
           synonyms: ["abandon"],
           tracks: ["other"],
         }),
@@ -551,6 +577,7 @@ export const passing: Fixture[] = [
           cloze: { en: "Soldiers who ___ their posts are punished.", answerForm: "desert" },
           answers: ["desert", "deserts", "deserted", "deserting"],
           family: ["deserter"],
+          nearWords: ["deserved", "deserving", "dessert", "desserts"],
           synonyms: ["abandon"],
           tracks: ["sample"],
         }),
@@ -570,6 +597,23 @@ export const passing: Fixture[] = [
   {
     name: "W_CLOZE_INFLECTION near-miss: a base form ending in -ss is not an -s form",
     files: one(sense({ clozeDistractors: ["discuss", "approve", "attend"] })),
+  },
+  {
+    name: "up-to-date nearWords (quiet → quit, quite)",
+    files: one(
+      sense({
+        id: "quiet.adj.01",
+        lemma: "quiet",
+        pos: "adj",
+        example: { en: "The library is very quiet.", he: "הספרייה שקטה מאוד." },
+        cloze: { en: "Please be ___ during the exam.", answerForm: "quiet" },
+        clozeDistractors: ["ancient", "empty", "reliable"],
+        answers: ["quiet", "quieter", "quietest"],
+        family: ["quietly"],
+        synonyms: [],
+        nearWords: ["quit", "quite"],
+      }),
+    ),
   },
   {
     name: "valid pseudowords",
