@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Design tokens (colors, radii, spacing, motion) arrive in M2 — docs/DESIGN.md. */
+@theme inline {
+  --font-sans: var(--font-heebo), system-ui, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
