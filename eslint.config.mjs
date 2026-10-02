@@ -6,6 +6,16 @@ import vocabi from "./eslint-rules/no-physical-direction-classes.mjs";
 
 const injectMsg = "src/engine/ is pure: inject `now` / `rng` instead (CLAUDE.md, docs/ENGINE.md).";
 
+// content/reference/ (wordfreq, CC-BY-SA) is for offline validation only and must never reach the
+// app bundle (docs/DECISIONS.md #28). scripts/content/reference-guard.test.ts greps src/ as well.
+const referencePath = "/content.reference|top20k/";
+const referenceMsg =
+  "content/reference/ is for scripts/ and tests only; never import or read it from src/ (docs/DECISIONS.md #28).";
+const noReference = [
+  { selector: `Literal[value=${referencePath}]`, message: referenceMsg },
+  { selector: `TemplateElement[value.raw=${referencePath}]`, message: referenceMsg },
+];
+
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -21,10 +31,16 @@ export default defineConfig([
     rules: { "vocabi/no-physical-direction-classes": "off" },
   },
   {
+    files: ["src/**/*.{js,mjs,cjs,jsx,ts,mts,tsx}"],
+    rules: { "no-restricted-syntax": ["error", ...noReference] },
+  },
+  {
+    // Repeats noReference: a later block's options replace, not merge, the earlier block's.
     files: ["src/engine/**/*.{ts,tsx,mts}"],
     rules: {
       "no-restricted-syntax": [
         "error",
+        ...noReference,
         {
           selector: "CallExpression[callee.object.name='Date'][callee.property.name='now']",
           message: `Date.now() is forbidden. ${injectMsg}`,
