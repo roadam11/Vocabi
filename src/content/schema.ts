@@ -92,6 +92,18 @@ export const PlacementItem = z.strictObject({
 });
 export type PlacementItem = z.infer<typeof PlacementItem>;
 
+/**
+ * Band sizes in lemmas, computed from data at content-build time (docs/DECISIONS.md #31):
+ * the bands are a disjoint partition, so Σ size is the size of the whole tested vocabulary.
+ */
+export const PlacementBands = z.strictObject(
+  Object.fromEntries(BANDS.map((b) => [b, z.number().int().positive()])) as Record<
+    (typeof BANDS)[number],
+    z.ZodNumber
+  >,
+);
+export type PlacementBands = z.infer<typeof PlacementBands>;
+
 /** A pronounceable non-word for the placement yes/no test (docs/DECISIONS.md #7). */
 export const Pseudoword = z.strictObject({
   id: text,
