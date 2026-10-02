@@ -546,6 +546,29 @@ describe("in-session relearning (docs/DECISIONS.md #40)", () => {
     expect(final).toBe(1800);
   });
 
+  it("check follow-ups stay within the budget while relearning copies use the overflow (#47)", () => {
+    const due = senses(2, REC, "B4").map((x) => ({ ...x, id: `d${x.id}` }));
+    const fresh = senses(2, REC_CTX, "B1");
+    const placement = { perBand: [{ band: "B1" as const, p: 0.9 }] };
+    const built = session({ senses: [...due, ...fresh], cards: dueCards(due), placement });
+    expect(built.items.map((i) => i.kind)).toEqual(["review", "review", "check", "check"]);
+    // The plan fills the budget exactly: nothing optional fits any more.
+    let s: SessionState = { ...built, budgetSec: sec(built.items) };
+    s = step(s, bad).state; // a wrong review: its copy still goes in (overflow)
+    expect(s.items.filter((i) => i.requeue)).toHaveLength(1);
+    expect(sec(s.items)).toBeGreaterThan(s.budgetSec);
+    while (currentItem(s)!.kind !== "check") s = step(s).state;
+    const before = s.items.length;
+    s = step(s, ok).state; // a passed check: its context follow-up would pass the budget
+    expect(s.items).toHaveLength(before);
+    expect(s.items.some((i) => i.kind === "practice" && i.layer === "context")).toBe(false);
+    // Control: with room in the budget, the same check does get its follow-up.
+    let roomy: SessionState = { ...built, budgetSec: sec(built.items) + 100 };
+    while (currentItem(roomy)!.kind !== "check") roomy = step(roomy).state;
+    roomy = step(roomy, ok).state;
+    expect(roomy.items.some((i) => i.kind === "practice" && i.layer === "context")).toBe(true);
+  });
+
   it("relearnLimitSec = min(budget + max(50%, 120 s), cap)", () => {
     expect(relearnLimitSec({ budgetSec: 300, capSec: 1800 })).toBe(450);
     expect(relearnLimitSec({ budgetSec: 60, capSec: 1800 })).toBe(180);
@@ -620,6 +643,15 @@ describe("daily new-sense ceiling and tomorrow's projection (docs/DECISIONS.md #
     expect(s.items.filter((i) => i.kind === "learn")).toHaveLength(2);
   });
 
+  it("the regular session is clamped by the ceiling too, not only extra practice", () => {
+    // No exam: the 40% share fits 5 units, but 18 of the 20 allowed were introduced today.
+    expect(
+      session({ senses: senses(30, REC_CTX) }).items.filter((i) => i.kind === "learn"),
+    ).toHaveLength(5);
+    const s = session({ senses: senses(30, REC_CTX), introducedToday: ids(18) });
+    expect(s.items.filter((i) => i.kind === "learn")).toHaveLength(2);
+  });
+
   it('when the ceiling is reached, "learn more" is not offered and builds nothing', () => {
     const base = { senses: senses(30, REC_CTX), introducedToday: ids(20) };
     expect(buildSession(input(base))).toEqual({
@@ -647,6 +679,35 @@ describe("daily new-sense ceiling and tomorrow's projection (docs/DECISIONS.md #
     expect(r).toEqual({ reviews: 6, seconds: 2 * (8 + 15 + 20) });
   });
 });
+
+/** Whether `rest` (sense ids) can be ordered with no equal neighbours, after `fixed`. */
+function spaceable(fixed: string | null, rest: readonly string[]): boolean {
+  const counts = new Map<string, number>();
+  for (const id of rest) counts.set(id, (counts.get(id) ?? 0) + 1);
+  const keys = [...counts.keys()];
+  const memo = new Map<string, boolean>();
+  const go = (last: string | null, left: number[]): boolean => {
+    if (left.every((n) => n === 0)) return true;
+    const key = `${last}|${left.join(",")}`;
+    const hit = memo.get(key);
+    if (hit !== undefined) return hit;
+    const ok = keys.some(
+      (k, i) =>
+        k !== last &&
+        left[i]! > 0 &&
+        go(
+          k,
+          left.map((n, j) => (j === i ? n - 1 : n)),
+        ),
+    );
+    memo.set(key, ok);
+    return ok;
+  };
+  return go(
+    fixed,
+    keys.map((k) => counts.get(k)!),
+  );
+}
 
 describe("no two consecutive items of one sense (docs/DECISIONS.md #49)", () => {
   const pairs = (items: readonly SessionItem[], from = 0) =>
@@ -699,6 +760,49 @@ describe("no two consecutive items of one sense (docs/DECISIONS.md #49)", () => 
     expect(pairs(r.state.items, r.state.cursor)).toBe(0);
   });
 
+  it("repairs a run the nearest-item moves cannot fix (BBAAA → ABABA)", () => {
+    const a = sense("a.n.01", ALL);
+    const b = sense("b.n.01", REC_CTX);
+    const cards = cardMap([
+      reviewed("b.n.01", "recognition", [daysBefore(NOW, 30)]),
+      reviewed("b.n.01", "context", [daysBefore(NOW, 30)]),
+      reviewed("a.n.01", "recognition", [daysBefore(NOW, 5)]),
+      reviewed("a.n.01", "context", [daysBefore(NOW, 5)]),
+      reviewed("a.n.01", "production", [daysBefore(NOW, 5)]),
+    ]);
+    const s = session({ senses: [a, b], cards });
+    expect(s.items.map((i) => i.senseId)).toEqual([
+      "a.n.01",
+      "b.n.01",
+      "a.n.01",
+      "b.n.01",
+      "a.n.01",
+    ]);
+    // Each sense keeps its review order (lowest retrievability first).
+    const order = (id: string) => s.items.filter((i) => i.senseId === id).map((i) => i.layer);
+    const unrepaired = (id: string) =>
+      [...s.items]
+        .sort((x, y) => Number(x.id.slice(1)) - Number(y.id.slice(1)))
+        .filter((i) => i.senseId === id)
+        .map((i) => i.layer);
+    expect(order("a.n.01")).toEqual(unrepaired("a.n.01"));
+    expect(order("b.n.01")).toEqual(unrepaired("b.n.01"));
+  });
+
+  it('"review weak words" is spaced too', () => {
+    const a = sense("a.n.01", REC_CTX);
+    const b = sense("b.n.01", REC_CTX);
+    const cards = cardMap([
+      reviewed("a.n.01", "recognition", [daysBefore(NOW, 40)]),
+      reviewed("a.n.01", "context", [daysBefore(NOW, 40)]),
+      reviewed("b.n.01", "recognition", [daysBefore(NOW, 0.1)]),
+      reviewed("b.n.01", "context", [daysBefore(NOW, 0.1)]),
+    ]);
+    const s = session({ senses: [a, b], cards, extra: { kind: "weakWords", minutes: 5 } });
+    expect(s.items).toHaveLength(4);
+    expect(pairs(s.items)).toBe(0);
+  });
+
   it("random sessions: no same-sense neighbours at build time or after any event", () => {
     const fresh = senses(6, REC_CTX);
     const due = [sense("r1.n.01", REC_CTX), sense("r2.n.01", REC), sense("r3.n.01", REC)];
@@ -727,10 +831,22 @@ describe("no two consecutive items of one sense (docs/DECISIONS.md #49)", () => 
                 answer: rng() < 0.3 ? bad : ok,
                 countsTowardMastery: true,
               };
+        const prev = s;
         s = applyEvent(s, ev).state;
-        // Only a tail made of a single sense may leave neighbours (no other order exists).
-        const rest = s.items.slice(Math.max(s.cursor - 1, 0));
-        if (new Set(rest.map((i) => i.senseId)).size > 2) expect(pairs(s.items, s.cursor)).toBe(0);
+        // Neighbours remain only when no order of the remaining senses avoids them.
+        const fixed = s.items[s.cursor - 1]?.senseId ?? null;
+        const rest = s.items.slice(s.cursor).map((i) => i.senseId);
+        if (spaceable(fixed, rest)) expect(pairs(s.items, s.cursor)).toBe(0);
+        // Each sense keeps its order: items that were already planned stay in sequence.
+        const ids = (st: SessionState, id: string) =>
+          st.items
+            .slice(prev.cursor + 1)
+            .filter((i) => i.senseId === id)
+            .map((i) => i.id);
+        for (const id of new Set(rest)) {
+          const [old, now] = [ids(prev, id), ids(s, id)];
+          expect(now.filter((x) => old.includes(x))).toEqual(old.filter((x) => now.includes(x)));
+        }
       }
     }
   });

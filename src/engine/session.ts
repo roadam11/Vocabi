@@ -401,6 +401,7 @@ function weakWords(
     used += itemSeconds(c.layer);
     out.push(draft("practice", c.senseId, c.layer, "practice", true));
   }
+  respace(out, 0);
   return out;
 }
 
@@ -455,7 +456,9 @@ function gapsBefore<T extends Spaced>(items: readonly T[]): Map<T, number> {
  * Repairs each same-sense pair by moving the nearest other item (from `from` on; earlier items
  * are done) in between, never past an item of its own sense (each sense keeps its order), never
  * splitting the learn group. Moves that keep every gap ≥ min(GAP, its old gap) are preferred;
- * otherwise any move that removes a pair is taken. Each move removes a pair, so it terminates.
+ * otherwise any move that removes a pair is taken; as a last resort the tail is rebuilt
+ * (`rebuildTail`), which fixes runs like BABAA → ABABA that no single move can. Every accepted
+ * change leaves fewer pairs, so it terminates.
  */
 function respace<T extends Spaced>(items: T[], from: number): void {
   let i = Math.max(from, 1);
@@ -464,7 +467,10 @@ function respace<T extends Spaced>(items: T[], from: number): void {
       i++;
       continue;
     }
-    const moved = tryRepair(items, i, from, true) ?? tryRepair(items, i, from, false);
+    const moved =
+      tryRepair(items, i, from, true) ??
+      tryRepair(items, i, from, false) ??
+      rebuildTail(items, from);
     if (moved) {
       items.splice(0, items.length, ...moved);
       i = Math.max(from, 1);
@@ -515,6 +521,42 @@ function tryRepair<T extends Spaced>(
     }
   }
   return null;
+}
+
+/**
+ * Last resort: rebuilds the tail from `from` as close to its current order as possible. Each
+ * step takes the earliest item that is next in its sense's order, is not of the previous item's
+ * sense, and leaves a remainder that can still be ordered without neighbours. Succeeds whenever
+ * such an order exists (BABAA → ABABA, which no single move reaches); null otherwise, or if it
+ * would split the learn group.
+ */
+function rebuildTail<T extends Spaced>(items: readonly T[], from: number): T[] | null {
+  const rest = items.slice(from);
+  const left = new Map<string, number>();
+  for (const it of rest) left.set(it.senseId, (left.get(it.senseId) ?? 0) + 1);
+  // No-neighbour order of the remainder exists iff every sense fits in alternate slots.
+  const feasible = (last: string, n: number) =>
+    [...left].every(([id, c]) => c <= (id === last ? Math.floor(n / 2) : Math.ceil(n / 2)));
+  const out: T[] = [];
+  let last = items[from - 1]?.senseId;
+  while (rest.length > 0) {
+    const k = rest.findIndex((it, i) => {
+      if (it.senseId === last || rest.slice(0, i).some((x) => x.senseId === it.senseId)) {
+        return false;
+      }
+      left.set(it.senseId, left.get(it.senseId)! - 1);
+      const ok = feasible(it.senseId, rest.length - 1);
+      left.set(it.senseId, left.get(it.senseId)! + 1);
+      return ok;
+    });
+    if (k < 0) return null;
+    const [it] = rest.splice(k, 1);
+    left.set(it!.senseId, left.get(it!.senseId)! - 1);
+    out.push(it!);
+    last = it!.senseId;
+  }
+  const cand = [...items.slice(0, from), ...out];
+  return learnRuns(cand) <= learnRuns(items) ? cand : null;
 }
 
 /**
