@@ -1,7 +1,7 @@
 /**
  * FSRS cards and answer ratings (docs/ENGINE.md §1-2) on top of ts-fsrs 5. One card per
  * (senseId, layer). Every review yields a raw log entry so card state can be rebuilt from logs
- * alone (docs/DECISIONS.md #8, #38). ts-fsrs falls back to `new Date()` wherever `now` is omitted,
+ * alone (docs/DECISIONS.md #8, #38). ts-fsrs falls back to the wall clock wherever `now` is omitted,
  * so every call here passes the injected `now` explicitly.
  */
 import {

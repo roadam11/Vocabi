@@ -16,11 +16,11 @@ All engine code lives in `src/engine/`, is pure, and receives `now: Date`, `time
 | Wrong, or "I don't know" button | Again |
 | Correct but slow (> `slowMs[layer]`, CALIBRATE: 8000 / 15000 / 20000) or correct with an accepted typo | Hard |
 | Correct | Good |
-`Easy` is not used in Phase 0. A self-mark "I know this" in the learn step never rates a card; it schedules a verification item in the same session.
+`Easy` is not used in Phase 0. A self-mark "I know this" in the learn step never rates a card; it schedules a verification item in the same session. Every review writes a raw log entry with the rating and the raw outcome (`outcome`, `ms`, `typo`, `mode`); replay uses the stored rating, the raw fields exist to recalibrate `slowMs` (`docs/DECISIONS.md` #38). Implemented in `src/engine/fsrs.ts`.
 
 ## 3. Mastery
 A sense is **mastered** iff every required layer has a card with at least one successful review AND predicted retrievability at the horizon ≥ 0.90, where horizon = exam date (if set and in the future) else `now + 30 days`.
-Display states per sense: `new` → `learning` → `recognized` (recognition passed) → `mastered`. A lapse on any required layer drops the sense back to `learning`. Never show `mastered` for a sense that has only self-marks.
+Display states per sense: `new` → `learning` → `recognized` (recognition passed) → `mastered`. A lapse on any required layer drops the sense back to `learning`. Never show `mastered` for a sense that has only self-marks. A lapse is an Again on a layer that had succeeded before, and it lasts until that layer passes again; the exam horizon is the local start of the exam day, and "+30 days" is 30 local calendar days ahead (plus the time elapsed since today's local midnight) (`docs/DECISIONS.md` #36-37). Implemented in `src/engine/mastery.ts`.
 
 ## 4. Placement test
 ### Bank
@@ -76,7 +76,7 @@ Card states, review logs, and the persisted on-track status are read from and wr
 ## 8. Days and streaks
 - A day is a local calendar date in the user's time zone (`YYYY-MM-DD`). Never compute days as 24-hour multiples (DST).
 - Streak +1 on the first completed session of a local day. Freeze rule (`docs/DECISIONS.md` #6): no ISO weeks (Israeli weeks start Sunday — ISO week numbering was the wrong frame and could grant two freezes back to back across a week boundary). Store `lastFreezeDayKey`; a missed day is covered by an automatic freeze only if no freeze was used in the previous 6 local days (a rolling 7-day window, not a calendar week). Two consecutive missed days always break the streak — the freeze never covers a second consecutive miss.
-- Changing the device time zone must not double-count or break a streak (use the stored day keys).
+- Changing the device time zone must not double-count or break a streak (use the stored day keys). A session whose day key is earlier than the stored last-session key changes nothing (`docs/DECISIONS.md` #39). Implemented in `src/engine/days.ts` and `src/engine/streak.ts`; day keys are built from `formatToParts`, never from a locale string format.
 
 ## 9. Required tests (minimum)
 Placement: all-yes (f = 1), all-no, f = 0.5 boundary, early stop with < 4 pseudowords, truncated bounds, rounding to 250, clamping at 0 and max.
