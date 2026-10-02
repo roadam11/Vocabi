@@ -589,6 +589,7 @@
     },
     "clozeDistractors": ["ancient", "empty", "significant"],
     "answers": ["reliable"],
+    "nearWords": ["reliably"],
     "collocations": ["reliable source"],
     "family": ["rely", "reliability", "reliably"],
     "synonyms": ["dependable", "trustworthy"],

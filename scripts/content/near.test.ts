@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { computeNearWords, referenceForms } from "./near";
 
 const forms = referenceForms([
+  "star",
+  "stare",
+  "stared",
+  "staring",
+  "breath",
+  "breathe",
   "quite",
   "quit",
   "quiet",
@@ -25,7 +31,7 @@ describe("computeNearWords (docs/DECISIONS.md #34)", () => {
     expect(near).toContain("affects");
   });
 
-  it("excludes the sense's own forms: lemma, answers, family and the lemma's inflections", () => {
+  it("excludes the sense's own forms: lemma, answers and the lemma's regular inflections", () => {
     const near = computeNearWords(
       { lemma: "quiet", answers: ["quiet", "quieter"], family: ["quietly"] },
       forms,
@@ -34,6 +40,23 @@ describe("computeNearWords (docs/DECISIONS.md #34)", () => {
     expect(near).not.toContain("quieter");
     expect(near).not.toContain("quiets");
     expect(near).not.toContain("quietly");
+  });
+
+  it("a doubled-consonant answer still flags the real plain form (star: stared is not own)", () => {
+    const near = computeNearWords(
+      { lemma: "star", answers: ["star", "stars", "starred", "starring"] },
+      forms,
+    );
+    expect(near).toContain("stared");
+    expect(near).toContain("staring");
+  });
+
+  it("family members are different words, so they are flagged (breathe → breath)", () => {
+    const near = computeNearWords(
+      { lemma: "breathe", answers: ["breathe", "breathes"], family: ["breath"] },
+      forms,
+    );
+    expect(near).toContain("breath");
   });
 
   it("skips answers shorter than the typo threshold (no tolerance there anyway)", () => {
