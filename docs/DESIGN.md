@@ -30,7 +30,7 @@ Direction: "an expensive book, not a game". Calm, typographic, one accent color,
 
 ## RTL rules
 - `<html lang="he" dir="rtl">`. Logical properties only.
-- `<En>` component for every English fragment: `<span dir="ltr" lang="en" class="isolate">`. Applies to words, examples, IPA, brand names inside Hebrew sentences.
+- `<En>` component for every English fragment: renders `<bdi dir="ltr" lang="en">` (`<bdi>` is `unicode-bidi: isolate` by default; Tailwind's `isolate` class is `isolation: isolate`, unrelated — `docs/DECISIONS.md` #23). Applies to words, examples, IPA, brand names inside Hebrew sentences.
 - Mixed lines (Hebrew sentence containing an English word) must render in the correct reading order; covered by a Playwright screenshot test.
 - Directional icons (back/next arrows, chevrons) mirror in RTL; non-directional icons (play, check) do not.
 - Inputs for English answers: `dir="ltr"`, `lang="en"`, `autocapitalize="none"`, `autocorrect="off"`, `spellcheck="false"`, `inputmode="text"`.

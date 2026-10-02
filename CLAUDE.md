@@ -27,7 +27,7 @@ Read on demand (do NOT load all at once):
 ## Non-negotiables
 - IMPORTANT: Every task ends with evidence: the commands you ran and their output, plus screenshots for UI work. Never claim "done" without it.
 - UI is Hebrew, `<html lang="he" dir="rtl">`. All user-facing strings live in `src/i18n/he.ts`; no hard-coded Hebrew in components.
-- Any English text inside Hebrew UI goes through the `<En>` component (`dir="ltr" lang="en"`, `unicode-bidi: isolate`).
+- Any English text inside Hebrew UI goes through the `<En>` component, which renders `<bdi dir="ltr" lang="en">` (bidi-isolated; `docs/DECISIONS.md` #23).
 - Never attach a Hebrew prefix letter to a Latin word in UI copy ("ב־VOCABI" is forbidden; rephrase). Numeric ranges use ASCII hyphen or the word "עד", never an en dash (bidi reverses it).
 - Layout uses logical properties only (`ms-/me-/ps-/pe-/start-/end-`, `margin-inline-*`). No `left/right`, `ml-/mr-/pl-/pr-`. Directional icons must mirror in RTL.
 - Colors, radii, spacing, motion come from design tokens only (`docs/DESIGN.md`). No raw hex in components.
