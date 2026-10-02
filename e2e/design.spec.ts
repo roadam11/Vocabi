@@ -327,6 +327,13 @@ test.describe("edge cases", () => {
     expect(box!.x + box!.width).toBeLessThanOrEqual(clientWidth);
   });
 
+  test("example sentences render upright, never synthesized italic", async ({ page }) => {
+    await page.goto("/design");
+    const example = page.getByText("She chose to ignore the noise").first();
+    await expect(example).toHaveCSS("font-style", "normal");
+    await expect(example).toHaveCSS("font-synthesis-style", "none");
+  });
+
   test("a toast stays while its dismiss button has focus", async ({ page }) => {
     await page.clock.install();
     await page.goto("/design");

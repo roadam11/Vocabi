@@ -88,6 +88,8 @@
   .font-en-serif,
   .font-fraunces {
     font-variation-settings: "WONK" 0;
+    /* No italic file is loaded, so never let the browser fake one (docs/DESIGN.md "Typography"). */
+    font-synthesis-style: none;
   }
 
   /* docs/DESIGN.md "Accessibility": focus-visible ring in --accent. The 2px offset lets the page
