@@ -125,6 +125,11 @@ export const failing: FailingFixture[] = [
       "tracks/sample.json": { id: "sample", order: ["ghost.v.01"] },
     },
   },
+  {
+    name: "track file name does not match its id",
+    code: "TRACK_REF",
+    files: { "senses/a.json": [sense()], "tracks/other.json": { id: "sample", order: [] } },
+  },
   // Rule 2
   {
     name: "Latin inside parentheses touching a Hebrew prefix",
@@ -217,6 +222,16 @@ export const failing: FailingFixture[] = [
     name: "filled cloze equals the example",
     code: "CLOZE_EQUALS_EXAMPLE",
     files: one(sense(withCloze("The crew had to ___ the ship."))),
+  },
+  {
+    name: "filled cloze differs from the example only by punctuation",
+    code: "CLOZE_EQUALS_EXAMPLE",
+    files: one(
+      sense({
+        ...withExample({ en: "Yes, they decided to abandon the project." }),
+        ...withCloze("Yes they decided to ___ the project!"),
+      }),
+    ),
   },
   // Rule 5
   {
@@ -348,6 +363,26 @@ export const failing: FailingFixture[] = [
       return {
         "senses/a.json": all,
         "lexicon/distractors.json": [lexiconEntry({ he: { primary: "לְנְטוֹשׁ" } })],
+        "tracks/amirnet.json": track("amirnet", all),
+      };
+    })(),
+  },
+  {
+    name: "two candidates sharing a gloss count once",
+    code: "RECOGNITION_DISTRACTORS",
+    files: (() => {
+      // Target pool: approve, accept and allow (both לקבל → one usable option), admit (glossed
+      // like the target's alternate → ineligible) → 2. approve still has target, accept, admit.
+      const [, approve] = shippingVerbs();
+      const target = sense({ tracks: ["amirnet"] });
+      const all = [target, approve!];
+      return {
+        "senses/a.json": all,
+        "lexicon/distractors.json": [
+          lexiconEntry(),
+          lexiconEntry({ id: "allow.v.01", lemma: "allow" }),
+          lexiconEntry({ id: "admit.v.01", lemma: "admit", he: { primary: "לזנוח" } }),
+        ],
         "tracks/amirnet.json": track("amirnet", all),
       };
     })(),

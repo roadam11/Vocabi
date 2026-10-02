@@ -189,6 +189,9 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
   const trackIds = new Set(tracks.map((t) => t.value.id));
   for (const t of tracks) {
     const { id: trackId, order } = t.value;
+    if (t.file !== `tracks/${trackId}.json`) {
+      error(t.file, trackId, "TRACK_REF", `track "${trackId}" must live in tracks/${trackId}.json`);
+    }
     const seen = new Set<string>();
     for (const id of order) {
       const s = senseById.get(id);
@@ -287,7 +290,7 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
       }
       if (blanks === 1) {
         const filled = cloze.en.replace(BLANK, cloze.answerForm);
-        if (normalizeEnLoose(filled) === normalizeEnLoose(s.example.en)) {
+        if (tokens(filled).join(" ") === tokens(s.example.en).join(" ")) {
           error(file, s.id, "CLOZE_EQUALS_EXAMPLE", "cloze.en with the blank filled is example.en");
         }
       }
@@ -442,13 +445,23 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
       ...verifiedShipping.filter((c) => c !== target && visible(c)),
       ...verifiedLexicon.filter(visible),
     ];
-    const eligible = pool.filter((c) => isEligibleRecognitionDistractor(target, c));
+    // The 4 options are Hebrew glosses, so the distractors must not collide with each other
+    // either. Greedy pick in pool order: may undercount, never overcounts (safe for a gate).
+    const eligible: typeof pool = [];
+    for (const c of pool) {
+      if (
+        isEligibleRecognitionDistractor(target, c) &&
+        !eligible.some((e) => glossesCollide(e.he, c.he))
+      ) {
+        eligible.push(c);
+      }
+    }
     if (eligible.length < MIN_RECOGNITION_DISTRACTORS) {
       error(
         file,
         target.id,
         "RECOGNITION_DISTRACTORS",
-        `${eligible.length} eligible recognition distractors (${pos(target)}, band ±1); ${MIN_RECOGNITION_DISTRACTORS} required — add lexicon entries${eligible.length ? `; have ${quoteList(eligible.map((c) => c.lemma))}` : ""}`,
+        `${eligible.length} eligible recognition distractors with distinct glosses (${pos(target)}, band ±1); ${MIN_RECOGNITION_DISTRACTORS} required — add lexicon entries${eligible.length ? `; have ${quoteList(eligible.map((c) => c.lemma))}` : ""}`,
       );
     }
   }
