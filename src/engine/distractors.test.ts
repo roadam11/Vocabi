@@ -279,7 +279,8 @@ describe("buildRecognitionMcq", () => {
       // Fixed fast-check seed: a statistical bound must not flake from run to run.
       { numRuns: 50, seed: 42 },
     );
-  });
+    // 200,000 MCQs: ~2.5s locally, over the 5s default on a loaded 2-vCPU CI runner.
+  }, 30_000);
 });
 
 describe("buildContextMcq", () => {
