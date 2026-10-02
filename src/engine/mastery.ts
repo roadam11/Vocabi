@@ -22,7 +22,8 @@ export function requiredLayers(sense: { layers: readonly Layer[] }): readonly La
 
 /**
  * §3 horizon (docs/DECISIONS.md #37): the local start of the exam day if it is after today,
- * else the same local wall time 30 calendar days from now (not 30 × 24h).
+ * else local midnight 30 calendar days ahead plus the time elapsed since today's local midnight
+ * (not now + 30 × 24h).
  */
 export function masteryHorizon(now: Date, timeZone: string, examDayKey?: string): Date {
   const today = dayKey(now, timeZone);

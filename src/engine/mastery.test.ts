@@ -45,12 +45,20 @@ describe("masteryHorizon (docs/ENGINE.md §3, DECISIONS #37)", () => {
     expect(masteryHorizon(now, TZ, "2026-10-28").toISOString()).toBe("2026-10-27T22:00:00.000Z");
   });
 
-  it("is now + 30 local calendar days, same wall time, without an exam date", () => {
+  it("is 30 local calendar days ahead (elapsed time since midnight kept) without an exam date", () => {
     const h = masteryHorizon(now, TZ);
     expect(dayKey(h, TZ)).toBe(addDays("2026-10-03", MASTERY.defaultHorizonDays));
     // 10:15 local on 2026-11-02 is 08:15Z after DST ends: not now + 30 × 24h.
     expect(h.toISOString()).toBe("2026-11-02T08:15:00.000Z");
     expect(h.getTime() - now.getTime()).not.toBe(30 * DAY);
+  });
+
+  it("starting on the 25-hour DST day: keeps the time elapsed since local midnight", () => {
+    const dstDay = new Date("2026-10-25T08:00:00Z"); // 10:00 local; midnight was 21:00Z (UTC+3)
+    const h = masteryHorizon(dstDay, TZ);
+    expect(dayKey(h, TZ)).toBe("2026-11-24");
+    // 11h after local midnight of 2026-11-24 (22:00Z on 11-23, UTC+2).
+    expect(h.toISOString()).toBe("2026-11-24T09:00:00.000Z");
   });
 
   it("falls back to +30 days when the exam date is today or in the past", () => {
