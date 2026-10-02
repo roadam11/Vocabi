@@ -503,6 +503,8 @@ export const passing: Fixture[] = [
         { id: "p01", text: "flombiter" },
         { id: "p02", text: "grallistor" },
         { id: "p03", text: "trosklade" },
+        // docs/ENGINE.md §4 example pseudoword.
+        { id: "p04", text: "brindolate" },
       ],
     },
   },

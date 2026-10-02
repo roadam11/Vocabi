@@ -26,7 +26,7 @@ Display states per sense: `new` → `learning` → `recognized` (recognition pas
 ### Bank
 - Bands by frequency rank (CALIBRATE): B1 1-1000, B2 1001-2000, B3 2001-3000, B4 3001-5000, B5 5001-8000, ACAD (academic words not in B1-B3).
 - Per attempt: 5 real items per band (30) + 10 pseudowords + up to 4 verification MCQs ≈ 44 items, ~4-5 minutes.
-- Pseudowords are pronounceable non-words (e.g. "prendity"). `content:check` must prove none is a real word or inflection in the lexicon/word list.
+- Pseudowords are pronounceable non-words (e.g. "brindolate"). `content:check` must prove none is a real word or inflection in the lexicon/word list.
 ### Flow
 - Yes/no: "do you know this word?". Items interleaved; at least 4 pseudowords inside the first 20 items; bands roughly ascending.
 - Early stop: if two consecutive bands have real-word yes-rate ≤ 0.20, skip the remaining higher bands (`truncated = true`) — but only after ≥ 4 pseudowords were answered.
