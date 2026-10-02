@@ -83,6 +83,13 @@
     line-height: 1.6;
   }
 
+  /* Fraunces renders its "wonky" leaning h/n/m by default; pin them off for calm headwords
+     (docs/DECISIONS.md #26). Other faces ignore the unknown axis. */
+  .font-en-serif,
+  .font-fraunces {
+    font-variation-settings: "WONK" 0;
+  }
+
   /* docs/DESIGN.md "Accessibility": focus-visible ring in --accent. The 2px offset lets the page
      background separate the ring from accent-filled controls (primary button). */
   :focus-visible,

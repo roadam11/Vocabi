@@ -32,9 +32,11 @@ const newsreader = Newsreader({
   preload: false,
 });
 
+// opsz: headword sizes get the display optical size (font-optical-sizing: auto). WONK is loaded
+// so globals.css can pin it (docs/DECISIONS.md #26).
 const fraunces = Fraunces({
   subsets: ["latin"],
-  axes: ["opsz"],
+  axes: ["opsz", "WONK"],
   display: "swap",
   variable: "--nf-fraunces",
   preload: false,
