@@ -8,7 +8,12 @@ import { ANSWERS } from "../../src/engine/config";
 import { damerauLevenshtein, normalizeEn } from "../../src/engine/text";
 import { regularInflections } from "./inflect";
 
-export type NearWordsInput = { lemma: string; answers: readonly string[] };
+export type NearWordsInput = {
+  lemma: string;
+  answers: readonly string[];
+  /** Deliberately not excluded: family members are different words (breath ≠ breathe). */
+  family?: readonly string[];
+};
 
 /** Reference words plus their attested-paradigm inflections, deduplicated, bucketed by length. */
 export type ReferenceForms = Map<number, string[]>;
