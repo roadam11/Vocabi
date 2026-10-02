@@ -2,6 +2,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import type { Sense } from "../../src/content/schema";
 import { type Fixture, failing, passing } from "./fixtures";
 import { ERROR_CODES, formatDiagnostic, lemmaSlug, runCheck, WARNING_CODES } from "./validate";
 
@@ -39,6 +40,15 @@ describe("content:check failing fixtures: the named rule fires, and nothing else
 describe("content:check passing fixtures", () => {
   it.each(passing.map((f) => [f.name, f] as const))("%s", (_name, fixture) => {
     expect(check(fixture)).toEqual([]);
+  });
+
+  it("the exact-limit fixtures sit exactly at the limit", () => {
+    const first = (name: string) =>
+      (passing.find((f) => f.name.startsWith(name))!.files["senses/a.json"] as Sense[])[0]!;
+    const he = first("he.primary of exactly 40").he.primary;
+    expect([...new Intl.Segmenter("he", { granularity: "grapheme" }).segment(he)].length).toBe(40);
+    expect([...he].length).toBeGreaterThan(40);
+    expect([...first("example.en of exactly 120").example.en].length).toBe(120);
   });
 
   it("the repo's content/ (20 devOnly senses) is clean: no errors, no warnings", () => {

@@ -496,6 +496,81 @@ export const passing: Fixture[] = [
     files: { "placement/pseudo.json": [{ id: "p01", text: "brontxyz" }] },
     reference: ["brontali"],
   },
+  // Exact limits and near-misses: the closest content to each rule that must still pass.
+  {
+    name: "EN_HEBREW boundary: non-ASCII English outside the Hebrew block",
+    files: one(
+      sense({
+        senseEn: "to leave a café — or a naïve plan — and not come back",
+        ...withExample({ en: "The crew’s captain had to abandon the ship." }),
+        collocations: ["abandon a ₪1 plan"],
+      }),
+    ),
+  },
+  {
+    name: "he.primary of exactly 40 characters (graphemes; niqqud adds code points, not length)",
+    files: one(sense({ he: { primary: `${"לִנְטוֹשׁ ".repeat(5)}ולעזוב שוב`, alternates: [] } })),
+  },
+  {
+    name: "example.en of exactly 120 characters",
+    files: one(
+      sense(withExample({ en: `The crew had to abandon the ship${" very".repeat(16)} slowly.` })),
+    ),
+  },
+  {
+    name: "W_GLOSS_COLLISION near-miss: the same gloss in different tracks",
+    files: {
+      "senses/a.json": [
+        sense({ tracks: ["sample"] }),
+        sense({
+          id: "desert.v.01",
+          lemma: "desert",
+          he: { primary: "לנטוש", alternates: [] },
+          example: { en: "He would never desert his friends.", he: "הוא לעולם לא ינטוש את חבריו." },
+          cloze: { en: "Soldiers who ___ their posts are punished.", answerForm: "desert" },
+          answers: ["desert", "deserts", "deserted", "deserting"],
+          family: ["deserter"],
+          synonyms: ["abandon"],
+          tracks: ["other"],
+        }),
+      ],
+      "tracks/sample.json": { id: "sample", order: ["abandon.v.01"] },
+      "tracks/other.json": { id: "other", order: ["desert.v.01"] },
+    },
+  },
+  {
+    name: "W_GLOSS_COLLISION near-miss: glosses that differ by a word do not collide",
+    files: {
+      "senses/a.json": [
+        sense({ tracks: ["sample"] }),
+        sense({
+          id: "desert.v.01",
+          lemma: "desert",
+          he: { primary: "לנטוש את", alternates: [] },
+          example: { en: "He would never desert his friends.", he: "הוא לעולם לא ינטוש את חבריו." },
+          cloze: { en: "Soldiers who ___ their posts are punished.", answerForm: "desert" },
+          answers: ["desert", "deserts", "deserted", "deserting"],
+          family: ["deserter"],
+          synonyms: ["abandon"],
+          tracks: ["sample"],
+        }),
+      ],
+      "tracks/sample.json": { id: "sample", order: ["abandon.v.01", "desert.v.01"] },
+    },
+  },
+  {
+    name: "W_CLOZE_INFLECTION near-miss: -ed answerForm with -ed distractors",
+    files: one(
+      sense({
+        ...withCloze("They ___ the project when the money ran out.", "abandoned"),
+        clozeDistractors: ["achieved", "approved", "attended"],
+      }),
+    ),
+  },
+  {
+    name: "W_CLOZE_INFLECTION near-miss: a base form ending in -ss is not an -s form",
+    files: one(sense({ clozeDistractors: ["discuss", "approve", "attend"] })),
+  },
   {
     name: "valid pseudowords",
     files: {
