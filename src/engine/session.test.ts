@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Layer } from "@/content/schema";
 import { SESSION } from "./config";
 import { dayKey } from "./days";
+import { mulberry32 } from "./random";
 import {
   ALL,
   cardMap,
@@ -28,6 +29,10 @@ import {
   isFinished,
   isStale,
   itemRng,
+  projectTomorrowReviews,
+  relearnLimitSec,
+  dailyNewLimits,
+  type SessionEvent,
   type SessionInput,
   type SessionItem,
   sensesIntroducedOn,
@@ -100,7 +105,7 @@ describe("buildSession: empty state (docs/ENGINE.md §7 edge cases)", () => {
   it("no content at all → done, no extra practice offered", () => {
     expect(buildSession(input({}))).toEqual({
       kind: "done",
-      extra: { newWords: false, weakWords: false },
+      extra: { newWords: false, newWordsLeft: 0, weakWords: false },
     });
   });
 
@@ -112,7 +117,7 @@ describe("buildSession: empty state (docs/ENGINE.md §7 edge cases)", () => {
     expect(cards[cardKey("a.n.01", "recognition")]!.fsrs.due > NOW).toBe(true);
     expect(buildSession(input({ senses: ss, cards }))).toEqual({
       kind: "done",
-      extra: { newWords: false, weakWords: false },
+      extra: { newWords: false, newWordsLeft: 0, weakWords: false },
     });
   });
 
@@ -121,7 +126,11 @@ describe("buildSession: empty state (docs/ENGINE.md §7 edge cases)", () => {
     // Sense 0 reviewed today (not due again today); the new-word share is used up today.
     const cards = cardMap([reviewed(ss[0]!.id, "recognition", [daysBefore(NOW, 0.01)])]);
     const r = buildSession(input({ senses: ss, cards, minutesPerDay: 1 }));
-    expect(r).toEqual({ kind: "done", extra: { newWords: true, weakWords: true } });
+    // Daily ceiling max(2 × planned, 20) = 20 new senses, capped by the 2 unstarted ones.
+    expect(r).toEqual({
+      kind: "done",
+      extra: { newWords: true, newWordsLeft: 2, weakWords: true },
+    });
   });
 });
 
@@ -376,7 +385,9 @@ describe("verify-first (§7: p_b ≥ 0.8)", () => {
     const first = step(s, bad);
     expect(first.toRate).toEqual({ senseId: ss[0]!.id, layer: "recognition", answer: bad });
     s = first.state;
-    expect(label(currentItem(s)!)).toBe(`learn:${ss[0]!.id}`);
+    // The teach card comes next but one: never right after the same word's check (#49).
+    expect(currentItem(s)!.senseId).not.toBe(ss[0]!.id);
+    expect(label(s.items[s.cursor + 1]!)).toBe(`learn:${ss[0]!.id}`);
     const mine = s.items.filter((i, k) => k >= s.cursor && i.senseId === ss[0]!.id);
     expect(mine.map((i) => `${i.kind}:${i.layer}`)).toEqual([
       "learn:null",
@@ -444,7 +455,8 @@ describe('"I know this" in the learn step (docs/DECISIONS.md #41)', () => {
     });
     expect(w.toRate).toMatchObject({ senseId: id, layer: "recognition" });
     let t = w.state;
-    expect(label(currentItem(t)!)).toBe(`learn:${id}`);
+    expect(currentItem(t)!.senseId).not.toBe(id);
+    expect(label(t.items[t.cursor + 1]!)).toBe(`learn:${id}`);
     while (!isFinished(t)) {
       w = step(t, ok);
       if (w.toRate?.senseId === id) rated.push(w.toRate.layer);
@@ -506,11 +518,39 @@ describe("in-session relearning (docs/DECISIONS.md #40)", () => {
     expect(isFinished(r.state)).toBe(true);
   });
 
-  it("is skipped when the copy would exceed the time budget", () => {
-    const s = session({ senses: ss, cards, minutesPerDay: 1 }); // 7 × 8 s = 56 s of 60
-    expect(sec(s.items)).toBe(56);
-    const r = step(s, bad);
-    expect(r.state.items).toHaveLength(s.items.length);
+  /** Answers every item wrong to the end; returns the final plan's estimated seconds. */
+  const allWrong = (minutes: number, pool: readonly SessionSense[]) => {
+    let s = session({ senses: pool, cards: dueCards(pool), minutesPerDay: minutes });
+    const planned = sec(s.items);
+    while (!isFinished(s)) s = step(s, bad).state;
+    return { planned, final: sec(s.items), state: s };
+  };
+
+  it("copies may overflow: a 5-minute session of wrong answers ends by 7.5 minutes (#47)", () => {
+    const { planned, final } = allWrong(5, senses(80, REC));
+    expect(planned).toBe(296); // 37 reviews
+    expect(final).toBeGreaterThan(300);
+    expect(final).toBeLessThanOrEqual(450);
+    expect(final).toBeGreaterThan(450 - 8); // the overflow is actually used
+  });
+
+  it("a small budget still gets 2 minutes of overflow", () => {
+    // 7 reviews (56 s of 60): all 7 copies fit (112 s), since the limit is 60 + 120 = 180 s.
+    const { final } = allWrong(1, senses(40, REC));
+    expect(final).toBe(112);
+  });
+
+  it("a 20-minute session can reach the 30-minute cap but never pass it", () => {
+    const { planned, final } = allWrong(20, senses(200, REC));
+    expect(planned).toBe(1200);
+    expect(final).toBe(1800);
+  });
+
+  it("relearnLimitSec = min(budget + max(50%, 120 s), cap)", () => {
+    expect(relearnLimitSec({ budgetSec: 300, capSec: 1800 })).toBe(450);
+    expect(relearnLimitSec({ budgetSec: 60, capSec: 1800 })).toBe(180);
+    expect(relearnLimitSec({ budgetSec: 1200, capSec: 1800 })).toBe(1800);
+    expect(relearnLimitSec({ budgetSec: 1800, capSec: 1800 })).toBe(1800);
   });
 
   it("a layer is rated once per day: a review of a layer already rated today is not rated again", () => {
@@ -550,6 +590,149 @@ describe("extra practice after done (docs/DECISIONS.md #45)", () => {
       [ss[0]!.id, true],
     ]);
     expect(step(s, ok).toRate).toBeNull();
+  });
+});
+
+describe("daily new-sense ceiling and tomorrow's projection (docs/DECISIONS.md #48)", () => {
+  const ids = (n: number) => Array.from({ length: n }, (_, i) => `earlier${i}.n.01`);
+
+  it("dailyNewMax = max(2 × planned newPerDay, 20)", () => {
+    // No exam, 10 minutes: 5 units of 43 s fit the 240 s share → max(10, 20).
+    expect(dailyNewLimits(input({ senses: senses(30, REC_CTX) }))).toEqual({
+      plannedNewPerDay: 5,
+      dailyNewMax: 20,
+      newWordsLeft: 20,
+    });
+    // Exam in 30 days, 400 unmastered: ceil(400 / 16) = 25 → 50.
+    const big = input({ senses: senses(400, REC_CTX), examDayKey: "2026-11-02" });
+    expect(dailyNewLimits(big)).toMatchObject({ plannedNewPerDay: 25, dailyNewMax: 50 });
+    // Taper window: nothing planned → the floor of 20.
+    const taper = input({ senses: senses(30, REC_CTX), examDayKey: "2026-10-10" });
+    expect(dailyNewLimits(taper)).toMatchObject({ dailyNewMax: 20 });
+  });
+
+  it('"learn N more" is clamped to what is left of the ceiling', () => {
+    const s = session({
+      senses: senses(30, REC_CTX),
+      introducedToday: ids(18),
+      extra: { kind: "newWords", count: 5 },
+    });
+    expect(s.items.filter((i) => i.kind === "learn")).toHaveLength(2);
+  });
+
+  it('when the ceiling is reached, "learn more" is not offered and builds nothing', () => {
+    const base = { senses: senses(30, REC_CTX), introducedToday: ids(20) };
+    expect(buildSession(input(base))).toEqual({
+      kind: "done",
+      extra: { newWords: false, newWordsLeft: 0, weakWords: false },
+    });
+    expect(buildSession(input({ ...base, extra: { kind: "newWords", count: 5 } })).kind).toBe(
+      "done",
+    );
+  });
+
+  it("projects tomorrow's extra reviews: every layer rated today is due again tomorrow", () => {
+    const base = input({ senses: senses(30, REC_CTX) });
+    // ts-fsrs: a first Good puts the card in a 10-minute learning step → due by tomorrow.
+    expect(projectTomorrowReviews(base, 3)).toEqual({ reviews: 6, seconds: 3 * (8 + 15) });
+    expect(projectTomorrowReviews(base, 0)).toEqual({ reviews: 0, seconds: 0 });
+    // Clamped by the ceiling: only 1 of the 5 asked for is allowed.
+    const late = input({ senses: senses(30, REC_CTX), introducedToday: ids(19) });
+    expect(projectTomorrowReviews(late, 5)).toEqual({ reviews: 2, seconds: 23 });
+  });
+
+  it("verify-first senses count all their layers (the follow-ups rate them too)", () => {
+    const placement = { perBand: [{ band: "B1" as const, p: 0.9 }] };
+    const r = projectTomorrowReviews(input({ senses: senses(5, ALL, "B1"), placement }), 2);
+    expect(r).toEqual({ reviews: 6, seconds: 2 * (8 + 15 + 20) });
+  });
+});
+
+describe("no two consecutive items of one sense (docs/DECISIONS.md #49)", () => {
+  const pairs = (items: readonly SessionItem[], from = 0) =>
+    items.filter((it, i) => i > Math.max(from - 1, 0) && it.senseId === items[i - 1]!.senseId)
+      .length;
+
+  it("after an interrupted session: a due review and the missing-layer practice of one sense", () => {
+    // x: recognition due, context never reviewed; a: an older due recognition card.
+    const x = sense("x.n.01", REC_CTX);
+    const a = sense("a.n.01", REC);
+    const cards = cardMap([
+      reviewed("x.n.01", "recognition", [daysBefore(NOW, 2)]),
+      reviewed("a.n.01", "recognition", [daysBefore(NOW, 30)]),
+    ]);
+    const s = session({ senses: [a, x], cards, minutesPerDay: 1 });
+    expect(s.items.map(label)).toEqual([
+      "review:x.n.01:recognition",
+      "review:a.n.01:recognition",
+      "practice:x.n.01:context",
+    ]);
+  });
+
+  it("two due layers of one sense are separated", () => {
+    const y = sense("y.n.01", REC_CTX);
+    const z = sense("z.n.01", REC);
+    const cards = cardMap([
+      reviewed("y.n.01", "recognition", [daysBefore(NOW, 20)]),
+      reviewed("y.n.01", "context", [daysBefore(NOW, 20)]),
+      reviewed("z.n.01", "recognition", [daysBefore(NOW, 2)]),
+    ]);
+    const s = session({ senses: [y, z], cards });
+    // Review order is lowest retrievability first (ties by card key); respace keeps each
+    // sense's order and pulls the other sense in between.
+    expect(s.items.map(label)).toEqual([
+      "review:y.n.01:context",
+      "review:z.n.01:recognition",
+      "review:y.n.01:recognition",
+    ]);
+  });
+
+  it("a relearning copy never lands right before (or after) its sense's next layer", () => {
+    const ss = senses(4, REC_CTX);
+    let s = session({ senses: ss });
+    while (currentItem(s)!.kind === "learn") s = step(s).state;
+    // Layers are exactly GAP apart, so cursor + GAP is right before the same sense's context.
+    expect(label(s.items[s.cursor + 1 + GAP]!)).toBe(`practice:${ss[0]!.id}:context`);
+    const r = step(s, bad);
+    const copyAt = r.state.items.findIndex((i) => i.requeue);
+    expect(copyAt).toBeGreaterThanOrEqual(r.state.cursor + GAP);
+    expect(pairs(r.state.items, r.state.cursor)).toBe(0);
+  });
+
+  it("random sessions: no same-sense neighbours at build time or after any event", () => {
+    const fresh = senses(6, REC_CTX);
+    const due = [sense("r1.n.01", REC_CTX), sense("r2.n.01", REC), sense("r3.n.01", REC)];
+    const cards = cardMap([
+      ...due.map((d) => reviewed(d.id, "recognition", [daysBefore(NOW, 3)])),
+      reviewed("r1.n.01", "context", [daysBefore(NOW, 3)]),
+    ]);
+    const placement = { perBand: [{ band: "B1" as const, p: 0.9 }] };
+    const pool = [
+      ...due,
+      ...fresh,
+      ...senses(3, REC_CTX, "B1").map((x) => ({ ...x, id: `v${x.id}` })),
+    ];
+    for (let seed = 0; seed < 40; seed++) {
+      const rng = mulberry32(seed);
+      let s = session({ senses: pool, cards, placement, minutesPerDay: 20, seed });
+      expect(pairs(s.items)).toBe(0);
+      while (!isFinished(s)) {
+        const item = currentItem(s)!;
+        const ev: SessionEvent =
+          item.kind === "learn"
+            ? { type: rng() < 0.3 ? "knowIt" : "continue", itemId: item.id }
+            : {
+                type: "answer",
+                itemId: item.id,
+                answer: rng() < 0.3 ? bad : ok,
+                countsTowardMastery: true,
+              };
+        s = applyEvent(s, ev).state;
+        // Only a tail made of a single sense may leave neighbours (no other order exists).
+        const rest = s.items.slice(Math.max(s.cursor - 1, 0));
+        if (new Set(rest.map((i) => i.senseId)).size > 2) expect(pairs(s.items, s.cursor)).toBe(0);
+      }
+    }
   });
 });
 
@@ -682,7 +865,7 @@ describe("day 1 → day 2 → day 8 with an injected clock", () => {
     expect(Object.keys(cards)).toHaveLength(3);
     expect(build(new Date(NOW.getTime() + 3_600_000))).toEqual({
       kind: "done",
-      extra: { newWords: false, weakWords: true },
+      extra: { newWords: false, newWordsLeft: 0, weakWords: true },
     });
 
     const d2 = new Date(NOW.getTime() + 86_400_000);
@@ -696,7 +879,10 @@ describe("day 1 → day 2 → day 8 with an injected clock", () => {
 
     // Good on day 1 and day 2 schedules the next review 8 days after day 2 (ts-fsrs defaults).
     const d8 = new Date(NOW.getTime() + 7 * 86_400_000);
-    expect(build(d8)).toEqual({ kind: "done", extra: { newWords: false, weakWords: true } });
+    expect(build(d8)).toEqual({
+      kind: "done",
+      extra: { newWords: false, newWordsLeft: 0, weakWords: true },
+    });
     const day9 = build(new Date(NOW.getTime() + 8 * 86_400_000));
     expect(day9.kind === "session" && day9.state.items.map((i) => i.kind)).toEqual([
       "review",

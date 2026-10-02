@@ -7,9 +7,16 @@
  */
 import type { Layer } from "@/content/schema";
 import { SESSION } from "./config";
-import { dayKey } from "./days";
+import { addDays, dayKey, zonedDayStart } from "./days";
 import type { Band } from "./distractors";
-import { type Answer, type AnswerMode, cardKey, type ReviewLogEntry } from "./fsrs";
+import {
+  type Answer,
+  type AnswerMode,
+  applyReview,
+  cardKey,
+  newCardState,
+  type ReviewLogEntry,
+} from "./fsrs";
 import { masteryHorizon, requiredLayers } from "./mastery";
 import { mulberry32, type Rng } from "./random";
 import {
@@ -92,7 +99,16 @@ export interface SessionInput {
 export type BuildResult =
   | { kind: "session"; state: SessionState }
   /** "You're done for today", with the extra-practice choices that have something to offer. */
-  | { kind: "done"; extra: { newWords: boolean; weakWords: boolean } };
+  | {
+      kind: "done";
+      extra: {
+        /** "Learn N more new words" is offered: unstarted senses exist, daily ceiling not reached. */
+        newWords: boolean;
+        /** How many more new senses today allows (`dailyNewLimits`). */
+        newWordsLeft: number;
+        weakWords: boolean;
+      };
+    };
 
 const GAP = SESSION.relearnGap;
 const CAP_SEC = SESSION.hardCapMinutes * 60;
@@ -142,6 +158,7 @@ export function buildSession(input: SessionInput): BuildResult {
   const horizon = masteryHorizon(now, timeZone, input.examDayKey);
   const unmastered = unmasteredSenses(senses, cards, horizon);
   const unstarted = senses.filter((s) => !isStarted(s, cards));
+  const limits = dailyNewLimits(input);
 
   let budgetSec: number;
   let items: Draft[];
@@ -154,18 +171,21 @@ export function buildSession(input: SessionInput): BuildResult {
       budgetSec,
     );
   } else if (input.extra?.kind === "newWords") {
+    // "Learn N more": the 30-minute cap per session, the daily ceiling across the day (#48).
     budgetSec = CAP_SEC;
-    items = arrange([], pickNew(unstarted, p, input.extra.count, budgetSec, Infinity));
+    const count = Math.min(input.extra.count, limits.newWordsLeft);
+    items = arrange([], pickNew(unstarted, p, count, budgetSec, Infinity));
   } else {
-    budgetSec = Math.min(input.minutesPerDay * 60, CAP_SEC);
-    items = regular(input, p, unmastered.length, unstarted, budgetSec);
+    budgetSec = dailyBudgetSec(input);
+    items = regular(input, p, unmastered.length, unstarted, budgetSec, limits.newWordsLeft);
   }
 
   if (items.length === 0) {
     return {
       kind: "done",
       extra: {
-        newWords: unstarted.length > 0,
+        newWords: unstarted.length > 0 && limits.newWordsLeft > 0,
+        newWordsLeft: Math.min(limits.newWordsLeft, unstarted.length),
         weakWords: unmastered.some((s) => isStarted(s, cards)),
       },
     };
@@ -205,6 +225,7 @@ function regular(
   target: number,
   unstarted: readonly SessionSense[],
   budgetSec: number,
+  newWordsLeft: number,
 ): Draft[] {
   const { now, timeZone, senses, cards } = input;
   const today = dayKey(now, timeZone);
@@ -266,8 +287,82 @@ function regular(
     }, 0);
     shareSec = Math.max(0, SESSION.newShareNoExam * budgetSec - spent);
   }
+  maxCount = Math.min(maxCount, newWordsLeft);
   chains.push(...pickNew(unstarted, p, maxCount, budgetSec - used, shareSec));
   return arrange(reviews, chains);
+}
+
+const dailyBudgetSec = (input: Pick<SessionInput, "minutesPerDay">) =>
+  Math.min(input.minutesPerDay * 60, CAP_SEC);
+
+/**
+ * Daily new-sense limits (docs/DECISIONS.md #48). `plannedNewPerDay` is what the regular quota
+ * plans for a day: ceil(unmasteredTarget / (daysLeft − taperDays)) with an exam beyond the taper
+ * window, else the new senses (track order) that fit the 40% share of the daily budget.
+ * `dailyNewMax = max(2 × plannedNewPerDay, 20)` caps every new sense of the day, extra practice
+ * included; `newWordsLeft` is what remains of it after `introducedToday`.
+ */
+export function dailyNewLimits(input: SessionInput): {
+  plannedNewPerDay: number;
+  dailyNewMax: number;
+  newWordsLeft: number;
+} {
+  const { now, timeZone, senses, cards } = input;
+  const p = bandKnowledge(input.placement);
+  const exam = examDays(now, timeZone, input.examDayKey);
+  let plannedNewPerDay: number;
+  if (exam.kind === "upcoming" && exam.daysLeft > SESSION.taperDays) {
+    const horizon = masteryHorizon(now, timeZone, input.examDayKey);
+    const target = unmasteredSenses(senses, cards, horizon).length;
+    plannedNewPerDay = Math.ceil(target / (exam.daysLeft - SESSION.taperDays));
+  } else {
+    const budget = dailyBudgetSec(input);
+    const unstarted = senses.filter((s) => !isStarted(s, cards));
+    plannedNewPerDay = pickNew(
+      unstarted,
+      p,
+      Infinity,
+      budget,
+      SESSION.newShareNoExam * budget,
+    ).length;
+  }
+  const dailyNewMax = Math.max(SESSION.dailyNewMultiplier * plannedNewPerDay, SESSION.dailyNewMin);
+  return {
+    plannedNewPerDay,
+    dailyNewMax,
+    newWordsLeft: Math.max(0, dailyNewMax - input.introducedToday.length),
+  };
+}
+
+/**
+ * Extra reviews tomorrow if the learner takes "learn `count` more new words" now: the same senses
+ * `buildSession` would pick, every required layer rated once today (assuming correct answers), and
+ * each card counted when FSRS would make it due by the end of tomorrow. For the UI's "more words
+ * today = more reviews tomorrow".
+ */
+export function projectTomorrowReviews(
+  input: SessionInput,
+  count: number,
+): { reviews: number; seconds: number } {
+  const { now, timeZone, senses, cards } = input;
+  const p = bandKnowledge(input.placement);
+  const n = Math.min(count, dailyNewLimits(input).newWordsLeft);
+  const unstarted = senses.filter((s) => !isStarted(s, cards));
+  const picked = new Set(pickNew(unstarted, p, n, CAP_SEC, Infinity).map((u) => u[0]!.senseId));
+  const endOfTomorrow = zonedDayStart(addDays(dayKey(now, timeZone), 2), timeZone).getTime();
+  const dueTomorrow = (layer: Layer) =>
+    applyReview(newCardState("probe", layer, now), "good", now).fsrs.due.getTime() < endOfTomorrow;
+  let reviews = 0;
+  let seconds = 0;
+  for (const s of unstarted) {
+    if (!picked.has(s.id)) continue;
+    for (const l of requiredLayers(s)) {
+      if (!dueTomorrow(l)) continue;
+      reviews++;
+      seconds += itemSeconds(l);
+    }
+  }
+  return { reviews, seconds };
 }
 
 /** New senses in track order while the count, budget and share allow; stops at the first misfit. */
@@ -322,7 +417,104 @@ function arrange(reviews: readonly Draft[], chains: readonly Draft[][]): Draft[]
   const spares = reviews.slice(reviews.length - spareCount);
   const { order } = spaceChains(chains, spares.length);
   let s = 0;
-  return [...lead, ...order.map((d) => d ?? spares[s++]!), ...spares.slice(s)];
+  const out = [...lead, ...order.map((d) => d ?? spares[s++]!), ...spares.slice(s)];
+  respace(out, 0);
+  return out;
+}
+
+type Spaced = { senseId: string; kind: ItemKind };
+
+/** Pairs of neighbours of the same sense, counting from the pair (from − 1, from). */
+function adjacentPairs(items: readonly Spaced[], from: number): number {
+  let n = 0;
+  for (let i = Math.max(from, 1); i < items.length; i++) {
+    if (items[i]!.senseId === items[i - 1]!.senseId) n++;
+  }
+  return n;
+}
+
+/** Maximal runs of consecutive learn steps (1 = grouped). */
+function learnRuns(items: readonly Spaced[]): number {
+  return items.filter((it, i) => it.kind === "learn" && items[i - 1]?.kind !== "learn").length;
+}
+
+/** Other items between each item and the previous item of its sense, keyed by item. */
+function gapsBefore<T extends Spaced>(items: readonly T[]): Map<T, number> {
+  const last = new Map<string, number>();
+  const out = new Map<T, number>();
+  items.forEach((it, i) => {
+    const prev = last.get(it.senseId);
+    if (prev !== undefined) out.set(it, i - prev - 1);
+    last.set(it.senseId, i);
+  });
+  return out;
+}
+
+/**
+ * No two consecutive items of one sense whenever another order exists (docs/DECISIONS.md #49).
+ * Repairs each same-sense pair by moving the nearest other item (from `from` on; earlier items
+ * are done) in between, never past an item of its own sense (each sense keeps its order), never
+ * splitting the learn group. Moves that keep every gap ≥ min(GAP, its old gap) are preferred;
+ * otherwise any move that removes a pair is taken. Each move removes a pair, so it terminates.
+ */
+function respace<T extends Spaced>(items: T[], from: number): void {
+  let i = Math.max(from, 1);
+  while (i < items.length) {
+    if (items[i]!.senseId !== items[i - 1]!.senseId) {
+      i++;
+      continue;
+    }
+    const moved = tryRepair(items, i, from, true) ?? tryRepair(items, i, from, false);
+    if (moved) {
+      items.splice(0, items.length, ...moved);
+      i = Math.max(from, 1);
+    } else {
+      i++;
+    }
+  }
+}
+
+function tryRepair<T extends Spaced>(
+  items: readonly T[],
+  i: number,
+  from: number,
+  keepGaps: boolean,
+): T[] | null {
+  const sense = items[i]!.senseId;
+  const pairs = adjacentPairs(items, from);
+  const runs = learnRuns(items);
+  const gaps = gapsBefore(items);
+  const acceptable = (cand: T[]) => {
+    if (adjacentPairs(cand, from) >= pairs || learnRuns(cand) > runs) return false;
+    if (!keepGaps) return true;
+    for (const [it, g] of gapsBefore(cand)) if (g < Math.min(GAP, gaps.get(it)!)) return false;
+    return true;
+  };
+  for (let d = 1; d < items.length; d++) {
+    // Forward: pull items[j] (j > i) in before items[i].
+    const j = i + d;
+    if (j < items.length) {
+      const it = items[j]!;
+      if (it.senseId !== sense && !items.slice(i, j).some((x) => x.senseId === it.senseId)) {
+        const cand = [...items];
+        cand.splice(j, 1);
+        cand.splice(i, 0, it);
+        if (acceptable(cand)) return cand;
+      }
+    }
+    // Backward: push items[k] (k < i − 1) in between items[i − 1] and items[i].
+    const k = i - 1 - d;
+    if (k >= from) {
+      const it = items[k]!;
+      if (it.senseId !== sense && !items.slice(k + 1, i).some((x) => x.senseId === it.senseId)) {
+        const cand = [...items];
+        cand.splice(k, 1);
+        cand.splice(i - 1, 0, it);
+        if (acceptable(cand)) return cand;
+      }
+    }
+  }
+  return null;
 }
 
 /**
@@ -440,8 +632,9 @@ export function applyEvent(state: SessionState, event: SessionEvent): EventResul
   } else if (!correct && !item.requeue) {
     // In-session relearning (docs/DECISIONS.md #40): one unrated copy, GAP items later.
     const copy = { ...draft("practice", item.senseId, layer, "practice", true), requeue: true };
-    insertChain(s, [copy], s.cursor + GAP, s.budgetSec);
+    insertChain(s, [copy], s.cursor + GAP, relearnLimitSec(s));
   }
+  respace(s.items, s.cursor);
   return { state: s, toRate, accepted: true };
 }
 
@@ -454,7 +647,17 @@ function knowIt(s: SessionState, learn: SessionItem): SessionState {
   if (plannedSec(kept) + itemSeconds("recognition") > s.capSec) return s; // acts as "continue"
   s.items = kept;
   insertChain(s, [check], s.cursor + GAP, s.capSec);
+  respace(s.items, s.cursor);
   return s;
+}
+
+/** Relearning copies may overflow the budget by max(50%, 2 minutes), never past the cap (#47). */
+export function relearnLimitSec(s: Pick<SessionState, "budgetSec" | "capSec">): number {
+  const overflow = Math.max(
+    SESSION.relearnOverflowShare * s.budgetSec,
+    SESSION.relearnOverflowMinSec,
+  );
+  return Math.min(s.budgetSec + overflow, s.capSec);
 }
 
 /**
@@ -470,8 +673,16 @@ function insertChain(
   let at = firstIndex;
   for (const d of chain) {
     if (plannedSec(s.items) + itemSeconds(d.layer) > limitSec) return;
-    const idx = Math.min(at, s.items.length);
+    const idx = freeSlot(s, d.senseId, Math.min(at, s.items.length));
     s.items.splice(idx, 0, { ...d, id: `i${s.nextId++}` });
     at = idx + 1 + GAP;
   }
+}
+
+/** The first index from `start` whose neighbours are both of another sense, else `start`. */
+function freeSlot(s: SessionState, senseId: string, start: number): number {
+  for (let k = start; k <= s.items.length; k++) {
+    if (s.items[k - 1]?.senseId !== senseId && s.items[k]?.senseId !== senseId) return k;
+  }
+  return start;
 }

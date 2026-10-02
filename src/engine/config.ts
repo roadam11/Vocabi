@@ -112,4 +112,13 @@ export const SESSION = {
    * first practice, layer → next layer) and before a relearning copy (CALIBRATE).
    */
   relearnGap: 3,
+  /**
+   * Relearning copies may overflow the budget by max(share × budget, minSec), never past the
+   * hard cap (CALIBRATE, docs/DECISIONS.md #47).
+   */
+  relearnOverflowShare: 0.5,
+  relearnOverflowMinSec: 120,
+  /** Daily ceiling on new senses: max(multiplier × planned newPerDay, min) (CALIBRATE, #48). */
+  dailyNewMultiplier: 2,
+  dailyNewMin: 20,
 } as const;
