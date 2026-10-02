@@ -3,6 +3,7 @@
  * Band sizes are NOT here: they are computed from data into content/placement/bands.json
  * (docs/DECISIONS.md #31).
  */
+import type { Layer } from "@/content/schema";
 import type { Band } from "./distractors";
 
 // ---- §4 Placement ----------------------------------------------------------------------------
@@ -58,3 +59,32 @@ export const DISTRACTORS = {
   bandDistance: 1,
   widenedBandDistance: 2,
 } as const;
+
+// ---- §1-2 FSRS cards and ratings -------------------------------------------------------------
+
+/**
+ * ts-fsrs desired retention (CALIBRATE). Built-in default weights via generatorParameters
+ * (docs/DECISIONS.md #14); fuzz stays at the library default (off), so scheduling is deterministic.
+ */
+export const FSRS = { requestRetention: 0.9 } as const;
+
+/** A correct answer slower than this (strictly) is rated Hard (CALIBRATE, §2). */
+export const SLOW_MS: Readonly<Record<Layer, number>> = {
+  recognition: 8000,
+  context: 15000,
+  production: 20000,
+};
+
+// ---- §3 Mastery ------------------------------------------------------------------------------
+
+export const MASTERY = {
+  /** Predicted retrievability at the horizon needed for "mastered". */
+  minRetrievability: 0.9,
+  /** Horizon without a future exam date: this many local calendar days from now. */
+  defaultHorizonDays: 30,
+} as const;
+
+// ---- §8 Streaks ------------------------------------------------------------------------------
+
+/** One automatic freeze per rolling window of this many local days (docs/DECISIONS.md #6). */
+export const STREAK = { freezeWindowDays: 7 } as const;
