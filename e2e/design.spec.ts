@@ -290,4 +290,57 @@ test.describe("edge cases", () => {
       await expect(card.locator('[data-face="front"]')).toHaveAttribute("inert", "");
     });
   }
+
+  test("keys 1-4 do not answer behind an open Sheet", async ({ page }) => {
+    await page.goto("/design");
+    await hydrated(page);
+    await page.getByRole("button", { name: he.design.samples.openSheet }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.press("1");
+    await page.keyboard.press("Escape");
+    const feedback = page.getByTestId("choice-interactive").getByTestId("choice-feedback");
+    await expect(feedback).toHaveText("");
+    // Without the sheet the same key answers, and each option exposes its result as text.
+    await page.keyboard.press("2");
+    const interactive = page.getByTestId("choice-interactive");
+    await expect(interactive.locator("button[data-state='wrong']")).toContainText(
+      he.ds.choiceList.chosenOption,
+    );
+    await expect(interactive.locator("button[data-state='correct']")).toContainText(
+      he.ds.choiceList.correctOption,
+    );
+  });
+
+  test("text at 200% does not overflow horizontally (390px)", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/design");
+    await hydrated(page);
+    await page.evaluate(() => (document.documentElement.style.fontSize = "200%"));
+    const { scrollWidth, clientWidth } = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+    const card = page.getByTestId("flip-long").locator('[data-face="front"]');
+    const box = await card.boundingBox();
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(clientWidth);
+  });
+
+  test("a toast stays while its dismiss button has focus", async ({ page }) => {
+    await page.clock.install();
+    await page.goto("/design");
+    await hydrated(page);
+    await page.getByRole("button", { name: he.design.samples.showToast }).click();
+    const region = page.locator('[role="status"][aria-live="polite"].fixed');
+    const dismiss = region.getByRole("button", { name: he.ds.toast.dismiss });
+    await dismiss.focus();
+    await page.clock.runFor(10_000);
+    await expect(region).toContainText(he.design.samples.toastSuccess);
+    await expect(dismiss).toBeFocused();
+    // Once focus leaves, it auto-dismisses.
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await page.clock.runFor(6_000);
+    await expect(region).not.toContainText(he.design.samples.toastSuccess);
+  });
 });

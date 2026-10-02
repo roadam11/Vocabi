@@ -196,6 +196,11 @@ function WordCardSection() {
       <Example label={s.noAudio}>
         <WordCard {...sampleWords.long} meaning={s.longMeaning} />
       </Example>
+      <Example label={s.longFlip}>
+        <div data-testid="flip-long">
+          <WordCard {...sampleWords.long} meaning={s.longMeaning} revealed={false} />
+        </div>
+      </Example>
     </Section>
   );
 }

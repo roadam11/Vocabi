@@ -52,6 +52,7 @@ export function ChoiceList({
   const [answerId, setAnswerId] = useState<string | undefined>(initialAnswerId);
   const answeredRef = useRef(initialAnswerId !== undefined);
   const hintId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const answered = answerId !== undefined;
   const locked = answered || disabled;
 
@@ -69,6 +70,9 @@ export function ChoiceList({
     if (!shortcuts || locked) return;
     function onKeyDown(e: KeyboardEvent) {
       if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || isTypingTarget(e.target)) return;
+      // A modal (e.g. the report-error Sheet) makes this list inert: its keys are not answers.
+      const modal = document.querySelector("dialog:modal");
+      if (modal && !modal.contains(rootRef.current)) return;
       const n = /^(?:Digit|Numpad)([1-4])$/.exec(e.code)?.[1] ?? /^[1-4]$/.exec(e.key)?.[0];
       if (!n) return;
       const option = options[Number(n) - 1];
@@ -85,6 +89,7 @@ export function ChoiceList({
 
   return (
     <div
+      ref={rootRef}
       role="group"
       aria-label={labelledBy ? undefined : label}
       aria-labelledby={labelledBy}
@@ -145,6 +150,18 @@ export function ChoiceList({
                   )}
                 </span>
                 <span className="min-w-0 flex-1 break-words">{option.label}</span>
+                {/* The icon is aria-hidden: expose the result per option for re-reading. */}
+                {(state === "correct" || chosen) && answered && (
+                  <span className="sr-only">
+                    {[
+                      state === "correct" && he.ds.choiceList.correctOption,
+                      chosen && he.ds.choiceList.chosenOption,
+                    ]
+                      .filter(Boolean)
+                      .map((t) => `, ${t}`)
+                      .join("")}
+                  </span>
+                )}
               </button>
             </li>
           );

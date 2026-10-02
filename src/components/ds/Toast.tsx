@@ -68,18 +68,33 @@ export function useToast(): ShowToast {
   return show;
 }
 
+/** Auto-dismisses after `duration`, paused while hovered or focused (WCAG 2.2.1). */
 function AutoDismiss({ toast, onDone }: { toast: QueuedToast; onDone: (id: number) => void }) {
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const paused = hovered || focused;
   useEffect(() => {
+    if (paused) return;
     const timer = window.setTimeout(() => onDone(toast.id), toast.duration);
     return () => window.clearTimeout(timer);
-  }, [toast, onDone]);
+  }, [toast, onDone, paused]);
   return (
-    <Toast
-      tone={toast.tone}
-      message={toast.message}
-      onDismiss={() => onDone(toast.id)}
-      className="starting:translate-y-2 starting:opacity-0 transition-[translate,opacity] duration-(--duration-base) ease-out motion-reduce:starting:translate-y-0"
-    />
+    <div
+      className="pointer-events-auto"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
+      }}
+    >
+      <Toast
+        tone={toast.tone}
+        message={toast.message}
+        onDismiss={() => onDone(toast.id)}
+        className="starting:translate-y-2 starting:opacity-0 transition-[translate,opacity] duration-(--duration-base) ease-out motion-reduce:starting:translate-y-0"
+      />
+    </div>
   );
 }
 
@@ -107,9 +122,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         className="pointer-events-none fixed inset-x-0 bottom-0 z-50 mx-auto flex w-full max-w-[35rem] flex-col gap-2 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
       >
         {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto">
-            <AutoDismiss toast={t} onDone={dismiss} />
-          </div>
+          <AutoDismiss key={t.id} toast={t} onDone={dismiss} />
         ))}
       </div>
     </ToastContext.Provider>

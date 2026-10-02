@@ -30,7 +30,8 @@ function Headword({ headword, small = false }: { headword: string; small?: boole
   return (
     <En
       className={cx(
-        "block font-en-serif leading-tight font-medium break-words text-ink",
+        // min-w-0: inside the centering flex row a long word must shrink and wrap, not overflow.
+        "block min-w-0 max-w-full font-en-serif leading-tight font-medium break-words text-ink",
         small ? "text-2xl" : "text-[2.5rem] sm:text-5xl",
       )}
     >
@@ -87,7 +88,7 @@ function Face({
       aria-hidden={hidden || undefined}
       inert={hidden}
       className={cx(
-        "flex flex-col gap-6 backface-hidden [grid-area:1/1]",
+        "flex min-w-0 flex-col gap-6 backface-hidden [grid-area:1/1]",
         back && "rotate-y-180 motion-reduce:transform-none",
         // Reduced motion: faces are not rotated, so the hidden one fades out instead.
         "transition-opacity duration-(--duration-fast) ease-out",
@@ -124,7 +125,8 @@ export function WordCard({
       <div
         data-flip={revealed ? "back" : "front"}
         className={cx(
-          "grid transform-3d",
+          // minmax(0,1fr) + min-w-0 faces: long headwords wrap instead of widening the card.
+          "grid grid-cols-1 transform-3d",
           "transition-transform duration-(--duration-flip) ease-spring motion-reduce:transform-none",
           revealed && "rotate-y-180",
         )}

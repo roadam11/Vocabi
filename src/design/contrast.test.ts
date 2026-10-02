@@ -27,6 +27,7 @@ const PAIRS: Array<{ fg: string; bg: string; min: number; use: string }> = [
   { fg: "--on-accent", bg: "--success", min: TEXT, use: "success badge label" },
   { fg: "--ink", bg: "--accent-soft", min: TEXT, use: "selected chip / accent tint text" },
   { fg: "--accent", bg: "--accent-soft", min: NON_TEXT, use: "selected chip boundary" },
+  { fg: "--accent", bg: "--line", min: NON_TEXT, use: "ring/progress fill vs its track" },
   { fg: "--ink", bg: "--success-soft", min: TEXT, use: "correct option text" },
   { fg: "--success", bg: "--success-soft", min: TEXT, use: "correct option label" },
   { fg: "--ink", bg: "--danger-soft", min: TEXT, use: "wrong option text" },

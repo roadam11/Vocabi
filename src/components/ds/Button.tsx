@@ -35,18 +35,28 @@ export function Button({
   type = "button",
   className,
   children,
+  onClick,
   ...props
 }: ButtonProps) {
   return (
     <button
       type={type}
-      disabled={disabled || loading}
+      // Loading uses aria-disabled, not `disabled`, so a focused button keeps keyboard focus.
+      disabled={disabled}
+      aria-disabled={loading || undefined}
       aria-busy={loading || undefined}
+      onClick={(e) => {
+        if (loading) {
+          e.preventDefault();
+          return;
+        }
+        onClick?.(e);
+      }}
       data-variant={variant}
       className={cx(
         "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-control font-medium select-none",
         "transition-[background-color,border-color,color,scale] duration-(--duration-fast) ease-out",
-        "ui-active:scale-(--press-scale) disabled:cursor-not-allowed",
+        "ui-active:scale-(--press-scale) disabled:cursor-not-allowed aria-disabled:cursor-progress",
         // Disabled (not loading) is dimmed; loading keeps full color so the spinner reads as progress.
         disabled && !loading && "opacity-50",
         iconOnly ? "p-2" : "px-6 py-2 text-base",

@@ -43,6 +43,8 @@ export const he = {
       correct: "נכון!",
       wrong: "לא נכון.",
       correctAnswerIs: "התשובה הנכונה: {answer}",
+      correctOption: "התשובה הנכונה",
+      chosenOption: "הבחירה שלך",
     },
     answerInput: {
       label: "כתבו את המילה באנגלית",
@@ -122,6 +124,7 @@ export const he = {
       wordMeaningAlt: "עמיד; חסין",
       revealed: "אחרי היפוך",
       noAudio: "בלי שמע",
+      longFlip: "מילה ארוכה במצב היפוך",
       longMeaning:
         "משמעות ארוכה במיוחד שבודקת שבירת שורות: להימנע במכוון ובעקביות מלהתייחס למשהו שקורה ממש מולך",
       choiceQuestion: "מה הפירוש של המילה?",

@@ -27,7 +27,7 @@ const GAP = 5; // in stroke-length units, between segments
 
 /**
  * The signature element (docs/DESIGN.md, DECISIONS #2). Segments run clockwise from the top in
- * fixed layer order; filled = --accent, remaining = --line track. Never color-only: role="img"
+ * fixed layer order; filled = --accent, remaining = --line track with a --line-strong hairline. Never color-only: role="img"
  * with a complete aria-label.
  */
 export function MasteryRing(props: MasteryRingProps) {
@@ -58,6 +58,17 @@ export function MasteryRing(props: MasteryRingProps) {
                   cy={50}
                   r={R}
                   className="stroke-line"
+                  strokeDasharray={`${len} ${C}`}
+                  strokeDashoffset={offset}
+                />
+                {/* --line alone is under 3:1 against the page, so a --line-strong hairline marks
+                    each segment's extent (WCAG 1.4.11); the accent fill covers it when passed. */}
+                <circle
+                  cx={50}
+                  cy={50}
+                  r={R}
+                  className="stroke-line-strong"
+                  strokeWidth={1.5}
                   strokeDasharray={`${len} ${C}`}
                   strokeDashoffset={offset}
                 />

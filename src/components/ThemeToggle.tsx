@@ -22,7 +22,7 @@ export function ThemeToggle() {
   return (
     <fieldset className="flex flex-col items-start gap-2 self-start">
       <legend className="mb-2 text-sm font-medium text-ink-2">{he.theme.label}</legend>
-      <div className="inline-flex rounded-control border border-line-strong bg-surface p-1">
+      <div className="flex flex-wrap rounded-control border border-line-strong bg-surface p-1">
         {THEME_PREFERENCES.map((option) => (
           <label
             key={option}
