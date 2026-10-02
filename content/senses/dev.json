@@ -1,0 +1,668 @@
+[
+  {
+    "id": "abandon.v.01",
+    "lemma": "abandon",
+    "pos": "v",
+    "senseEn": "to leave something and not come back; to give up a plan",
+    "he": {
+      "primary": "לנטוש",
+      "alternates": ["לזנוח", "לעזוב"]
+    },
+    "knowledge": "prod",
+    "layers": ["recognition", "context", "production"],
+    "example": {
+      "en": "The crew had to abandon the ship.",
+      "he": "הצוות נאלץ לנטוש את הספינה."
+    },
+    "cloze": {
+      "en": "They decided to ___ the project when the money ran out.",
+      "answerForm": "abandon"
+    },
+    "clozeDistractors": ["achieve", "approve", "attend"],
+    "answers": ["abandon", "abandons", "abandoned", "abandoning"],
+    "collocations": ["abandon a plan", "abandon hope"],
+    "family": ["abandonment"],
+    "synonyms": ["desert", "give up"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "achieve.v.01",
+    "lemma": "achieve",
+    "pos": "v",
+    "senseEn": "to succeed in reaching a goal through effort",
+    "he": {
+      "primary": "להשיג",
+      "alternates": ["להגשים"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "She worked hard to achieve her goals.",
+      "he": "היא עבדה קשה כדי להשיג את המטרות שלה."
+    },
+    "cloze": {
+      "en": "With more practice, you can ___ a higher score.",
+      "answerForm": "achieve"
+    },
+    "clozeDistractors": ["hesitate", "abandon", "postpone"],
+    "answers": ["achieve", "achieves", "achieved", "achieving"],
+    "collocations": ["achieve a goal", "achieve success"],
+    "family": ["achievement"],
+    "synonyms": ["accomplish", "attain"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "approve.v.01",
+    "lemma": "approve",
+    "pos": "v",
+    "senseEn": "to officially agree to a plan or a request",
+    "he": {
+      "primary": "לאשר",
+      "alternates": ["להסכים ל־"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "The manager approved my request for a day off.",
+      "he": "המנהל אישר את הבקשה שלי ליום חופש."
+    },
+    "cloze": {
+      "en": "The city council voted to ___ the new budget.",
+      "answerForm": "approve"
+    },
+    "clozeDistractors": ["hesitate", "attend", "achieve"],
+    "answers": ["approve", "approves", "approved", "approving"],
+    "collocations": ["approve a plan", "approve a request"],
+    "family": ["approval"],
+    "synonyms": ["authorize", "endorse"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "attend.v.01",
+    "lemma": "attend",
+    "pos": "v",
+    "senseEn": "to be present at an event, such as a meeting or a class",
+    "he": {
+      "primary": "להשתתף ב־",
+      "alternates": ["לנכוח ב־"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "More than two hundred people attended the meeting.",
+      "he": "יותר ממאתיים איש השתתפו בפגישה."
+    },
+    "cloze": {
+      "en": "All students must ___ at least four classes a week.",
+      "answerForm": "attend"
+    },
+    "clozeDistractors": ["abandon", "approve", "hesitate"],
+    "answers": ["attend", "attends", "attended", "attending"],
+    "collocations": ["attend a meeting", "attend school"],
+    "family": ["attendance"],
+    "synonyms": ["be present at"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "ignore.v.01",
+    "lemma": "ignore",
+    "pos": "v",
+    "senseEn": "to pay no attention to something or someone",
+    "he": {
+      "primary": "להתעלם מ־",
+      "alternates": ["לא לשים לב ל־"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "She chose to ignore the noise and kept reading.",
+      "he": "היא בחרה להתעלם מהרעש והמשיכה לקרוא."
+    },
+    "cloze": {
+      "en": "If you ___ the warning signs, the problem will get worse.",
+      "answerForm": "ignore"
+    },
+    "clozeDistractors": ["achieve", "attend", "approve"],
+    "answers": ["ignore", "ignores", "ignored", "ignoring"],
+    "collocations": ["ignore advice", "ignore a problem"],
+    "family": ["ignorance", "ignorant"],
+    "synonyms": ["disregard", "overlook"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "hesitate.v.01",
+    "lemma": "hesitate",
+    "pos": "v",
+    "senseEn": "to pause before doing or saying something because you are unsure",
+    "he": {
+      "primary": "להסס",
+      "alternates": ["להתלבט"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "He hesitated before answering the question.",
+      "he": "הוא היסס לפני שענה על השאלה."
+    },
+    "cloze": {
+      "en": "Please don't ___ to call me if you need help.",
+      "answerForm": "hesitate"
+    },
+    "clozeDistractors": ["require", "approve", "achieve"],
+    "answers": ["hesitate", "hesitates", "hesitated", "hesitating"],
+    "collocations": ["hesitate to ask"],
+    "family": ["hesitation", "hesitant"],
+    "synonyms": ["pause", "waver"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "require.v.01",
+    "lemma": "require",
+    "pos": "v",
+    "senseEn": "to need something, or to make something necessary",
+    "he": {
+      "primary": "לדרוש",
+      "alternates": ["להצריך"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "This job requires a lot of patience.",
+      "he": "העבודה הזאת דורשת הרבה סבלנות."
+    },
+    "cloze": {
+      "en": "Most universities ___ an English placement exam.",
+      "answerForm": "require"
+    },
+    "clozeDistractors": ["abandon", "hesitate", "attend"],
+    "answers": ["require", "requires", "required", "requiring"],
+    "collocations": ["require attention"],
+    "family": ["requirement"],
+    "synonyms": ["need", "demand"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "postpone.v.01",
+    "lemma": "postpone",
+    "pos": "v",
+    "senseEn": "to move an event to a later time",
+    "he": {
+      "primary": "לדחות",
+      "alternates": ["להשהות"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "They postponed the trip because of the storm.",
+      "he": "הם דחו את הטיול בגלל הסערה."
+    },
+    "cloze": {
+      "en": "We had to ___ the meeting until next week.",
+      "answerForm": "postpone"
+    },
+    "clozeDistractors": ["achieve", "ignore", "require"],
+    "answers": ["postpone", "postpones", "postponed", "postponing"],
+    "collocations": ["postpone a meeting"],
+    "family": ["postponement"],
+    "synonyms": ["delay", "put off"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "get-along-with.phrase.01",
+    "lemma": "get along with",
+    "pos": "phrase",
+    "senseEn": "to have a friendly relationship with someone",
+    "he": {
+      "primary": "להסתדר עם",
+      "alternates": ["להיות ביחסים טובים עם"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "She gets along with everyone in her class.",
+      "he": "היא מסתדרת עם כולם בכיתה שלה."
+    },
+    "cloze": {
+      "en": "It is easier to work when you ___ your colleagues.",
+      "answerForm": "get along with"
+    },
+    "clozeDistractors": ["run out of", "carry out", "look forward to"],
+    "answers": [
+      "get along with",
+      "gets along with",
+      "got along with",
+      "getting along with",
+      "gotten along with"
+    ],
+    "collocations": ["get along with someone"],
+    "family": [],
+    "synonyms": ["get on with"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "look-forward-to.phrase.01",
+    "lemma": "look forward to",
+    "pos": "phrase",
+    "senseEn": "to feel happy and excited about something that is going to happen",
+    "he": {
+      "primary": "לצפות בקוצר רוח ל־",
+      "alternates": ["לחכות בהתרגשות ל־"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "I'm looking forward to the summer holiday.",
+      "he": "אני מחכה בקוצר רוח לחופשת הקיץ."
+    },
+    "cloze": {
+      "en": "The children ___ their grandmother's visit every year.",
+      "answerForm": "look forward to"
+    },
+    "clozeDistractors": ["carry out", "get along with", "run out of"],
+    "answers": ["look forward to", "looks forward to", "looked forward to", "looking forward to"],
+    "collocations": ["look forward to hearing from you"],
+    "family": [],
+    "synonyms": ["anticipate"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "put-up-with.phrase.01",
+    "lemma": "put up with",
+    "pos": "phrase",
+    "senseEn": "to accept something unpleasant without complaining",
+    "he": {
+      "primary": "לסבול",
+      "alternates": ["להשלים עם"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "I can't put up with this noise any longer.",
+      "he": "אני לא יכול לסבול את הרעש הזה יותר."
+    },
+    "cloze": {
+      "en": "She had to ___ a long and uncomfortable flight.",
+      "answerForm": "put up with"
+    },
+    "clozeDistractors": ["look forward to", "get along with", "run out of"],
+    "answers": ["put up with", "puts up with", "putting up with"],
+    "collocations": ["put up with noise"],
+    "family": [],
+    "synonyms": ["tolerate", "stand"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "carry-out.phrase.01",
+    "lemma": "carry out",
+    "pos": "phrase",
+    "senseEn": "to do a task or a plan that you have decided or been told to do",
+    "he": {
+      "primary": "לבצע",
+      "alternates": ["ליישם"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "The team carried out the experiment with great care.",
+      "he": "הצוות ביצע את הניסוי (experiment) בזהירות רבה."
+    },
+    "cloze": {
+      "en": "Scientists will ___ more tests next month.",
+      "answerForm": "carry out"
+    },
+    "clozeDistractors": ["get along with", "put up with", "look forward to"],
+    "answers": ["carry out", "carries out", "carried out", "carrying out"],
+    "collocations": ["carry out research"],
+    "family": [],
+    "synonyms": ["perform", "conduct"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "knowledge.n.01",
+    "lemma": "knowledge",
+    "pos": "n",
+    "senseEn": "information and understanding that you gain through learning or experience",
+    "he": {
+      "primary": "ידע",
+      "alternates": ["הבנה"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "Her knowledge of history is impressive.",
+      "he": "הידע שלה בהיסטוריה מרשים."
+    },
+    "cloze": {
+      "en": "Reading every day will improve your general ___.",
+      "answerForm": "knowledge"
+    },
+    "clozeDistractors": ["evidence", "decade", "harvest"],
+    "answers": ["knowledge"],
+    "collocations": ["general knowledge", "knowledge of"],
+    "family": ["know", "knowledgeable"],
+    "synonyms": ["understanding", "expertise"],
+    "freqBand": "B2",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "evidence.n.01",
+    "lemma": "evidence",
+    "pos": "n",
+    "senseEn": "facts or signs that show that something is true",
+    "he": {
+      "primary": "ראיה",
+      "alternates": ["הוכחה", "רְאָיוֹת"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "The police found new evidence in the report.",
+      "he": "המשטרה מצאה ראיות חדשות בדו״ח."
+    },
+    "cloze": {
+      "en": "There is no scientific ___ that the drug works.",
+      "answerForm": "evidence"
+    },
+    "clozeDistractors": ["decade", "attitude", "harvest"],
+    "answers": ["evidence"],
+    "collocations": ["strong evidence"],
+    "family": ["evident", "evidently"],
+    "synonyms": ["proof"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "attitude.n.01",
+    "lemma": "attitude",
+    "pos": "n",
+    "senseEn": "the way you think and feel about something",
+    "he": {
+      "primary": "גישה",
+      "alternates": ["יחס"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "He has a positive attitude toward work.",
+      "he": "יש לו גישה חיובית לעבודה."
+    },
+    "cloze": {
+      "en": "A good ___ can help you learn faster.",
+      "answerForm": "attitude"
+    },
+    "clozeDistractors": ["evidence", "decade", "harvest"],
+    "answers": ["attitude", "attitudes"],
+    "collocations": ["positive attitude"],
+    "family": ["attitudinal"],
+    "synonyms": ["outlook", "approach"],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "decade.n.01",
+    "lemma": "decade",
+    "pos": "n",
+    "senseEn": "a period of ten years",
+    "he": {
+      "primary": "עשור",
+      "alternates": ["עשר שנים"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "Prices have doubled over the last decade.",
+      "he": "המחירים הוכפלו בעשור האחרון."
+    },
+    "cloze": {
+      "en": "The company grew quickly during its first ___.",
+      "answerForm": "decade"
+    },
+    "clozeDistractors": ["evidence", "knowledge", "attitude"],
+    "answers": ["decade", "decades"],
+    "collocations": ["the past decade"],
+    "family": ["decadal"],
+    "synonyms": [],
+    "freqBand": "B3",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "well-known.adj.01",
+    "lemma": "well-known",
+    "pos": "adj",
+    "senseEn": "known by many people",
+    "he": {
+      "primary": "מוכר",
+      "alternates": ["ידוע", "מפורסם"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "The town is well-known for its beaches.",
+      "he": "העיירה מוכרת בזכות החופים שלה."
+    },
+    "cloze": {
+      "en": "The singer is ___ all over the world, so people stop her in the street.",
+      "answerForm": "well-known"
+    },
+    "clozeDistractors": ["ancient", "empty", "reliable"],
+    "answers": ["well-known", "well known"],
+    "collocations": ["well-known for"],
+    "family": [],
+    "synonyms": ["famous"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "reliable.adj.01",
+    "lemma": "reliable",
+    "pos": "adj",
+    "senseEn": "that you can trust or depend on",
+    "he": {
+      "primary": "אמין",
+      "alternates": ["מהימן"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "We need a reliable car for the long drive.",
+      "he": "אנחנו צריכים מכונית אמינה לנסיעה הארוכה."
+    },
+    "cloze": {
+      "en": "He always keeps his promises; he is very ___.",
+      "answerForm": "reliable"
+    },
+    "clozeDistractors": ["ancient", "empty", "significant"],
+    "answers": ["reliable"],
+    "collocations": ["reliable source"],
+    "family": ["rely", "reliability", "reliably"],
+    "synonyms": ["dependable", "trustworthy"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "significant.adj.01",
+    "lemma": "significant",
+    "pos": "adj",
+    "senseEn": "large or important enough to have an effect",
+    "he": {
+      "primary": "משמעותי",
+      "alternates": ["ניכר"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "There has been a significant increase in prices.",
+      "he": "חלה עלייה משמעותית במחירים."
+    },
+    "cloze": {
+      "en": "The new law made a ___ difference to small businesses.",
+      "answerForm": "significant"
+    },
+    "clozeDistractors": ["ancient", "empty", "hungry"],
+    "answers": ["significant"],
+    "collocations": ["significant difference"],
+    "family": ["significance", "significantly"],
+    "synonyms": ["important", "considerable"],
+    "freqBand": "ACAD",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  },
+  {
+    "id": "ancient.adj.01",
+    "lemma": "ancient",
+    "pos": "adj",
+    "senseEn": "very old; from a long time ago",
+    "he": {
+      "primary": "עתיק",
+      "alternates": ["קַדְמוֹן"]
+    },
+    "knowledge": "rec",
+    "layers": ["recognition", "context"],
+    "example": {
+      "en": "We visited the ruins of an ancient city.",
+      "he": "ביקרנו בהריסות של עיר עתיקה."
+    },
+    "cloze": {
+      "en": "The museum shows tools from ___ Egypt.",
+      "answerForm": "ancient"
+    },
+    "clozeDistractors": ["reliable", "hungry", "empty"],
+    "answers": ["ancient"],
+    "collocations": ["ancient history"],
+    "family": ["anciently"],
+    "synonyms": ["old", "antique"],
+    "freqBand": "B4",
+    "tracks": ["amirnet"],
+    "verification": {
+      "status": "verified",
+      "reviewedBy": "roie",
+      "reviewedAt": "2026-10-02"
+    },
+    "devOnly": true
+  }
+]

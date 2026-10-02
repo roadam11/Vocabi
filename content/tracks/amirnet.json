@@ -1,0 +1,25 @@
+{
+  "id": "amirnet",
+  "order": [
+    "knowledge.n.01",
+    "achieve.v.01",
+    "attend.v.01",
+    "ignore.v.01",
+    "require.v.01",
+    "get-along-with.phrase.01",
+    "look-forward-to.phrase.01",
+    "carry-out.phrase.01",
+    "evidence.n.01",
+    "attitude.n.01",
+    "decade.n.01",
+    "abandon.v.01",
+    "approve.v.01",
+    "hesitate.v.01",
+    "postpone.v.01",
+    "put-up-with.phrase.01",
+    "well-known.adj.01",
+    "reliable.adj.01",
+    "ancient.adj.01",
+    "significant.adj.01"
+  ]
+}
