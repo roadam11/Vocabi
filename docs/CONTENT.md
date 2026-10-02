@@ -86,7 +86,7 @@ Warnings (printed, not failing):
 2. `pnpm content:check` on the drafts.
 3. `scripts/content/export-review.ts` → `review/*.csv` (UTF-8 **with BOM** so Excel shows Hebrew correctly). Columns: id, lemma, pos, senseEn, he.primary, he.alternates, example.en, example.he, cloze.en, clozeDistractors, decision (approve/fix/reject), fix notes.
 4. Human review (Roie) of every record. For pseudowords specifically, also reject any candidate that is a real word in another language, slang, or a brand name (`docs/DECISIONS.md` #7) — the automated Damerau-Levenshtein/length check above (rule 9) only catches near-collisions with common English words.
-5. `scripts/content/import-review.ts` applies decisions, sets `verified`, `reviewedBy`, `reviewedAt`. Rejected senses stay in the file with status `rejected`.
+5. `scripts/content/import-review.ts` applies decisions, sets `verified`, `reviewedBy`, `reviewedAt`. Rejected senses stay in the file with status `rejected`, and import-review removes them from every track: `tracks` becomes `[]` and the id is deleted from every `tracks/<id>.json` `order` (a rejected sense left in a track fails rule 8 `SHIPPING_UNVERIFIED` and rule 1 `TRACK_REF`).
 
 ### Phase 1 (scale)
 Add a blind cross-check by a model from a different provider, licensed dictionary evidence, a confidence score (green/yellow/red), human review of yellow/red, and a random sample of 300 green records per batch (0 errors in 300 ⇒ error rate < 1% at 95% confidence, "rule of three").
