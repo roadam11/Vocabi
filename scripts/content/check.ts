@@ -26,7 +26,9 @@ function readReference(path: string): string[] {
 const diagnostics = runCheck(root, { reference: readReference(referencePath) });
 const errors = diagnostics.filter((d) => d.severity === "error");
 const warnings = diagnostics.filter((d) => d.severity === "warning");
-const prefix = `${relative(process.cwd(), root) || "."}/`;
+const rel = relative(process.cwd(), root);
+// Paths inside the repo print relative (content/senses/dev.json), others absolute.
+const prefix = `${rel.startsWith("..") ? root : rel || "."}/`;
 
 if (errors.length > 0) {
   console.log(`Errors (${errors.length}):`);
