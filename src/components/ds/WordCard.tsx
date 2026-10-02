@@ -66,7 +66,7 @@ function Meaning({ meaning, example }: Pick<WordCardProps, "meaning" | "example"
       {example && (
         <p className="text-ink-2">
           <span className="sr-only">{he.ds.wordCard.example}: </span>
-          <En className="block font-en-serif text-lg break-words italic">{example}</En>
+          <En className="block font-en-serif text-lg break-words">{example}</En>
         </p>
       )}
     </div>

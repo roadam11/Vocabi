@@ -30,6 +30,7 @@ Direction: "an expensive book, not a game". Calm, typographic, one accent color,
 
 ## Typography (`next/font`, self-hosted, `display: swap`)
 - English headword: a Latin serif, **Fraunces** (chosen over Newsreader after the `/design` side-by-side; `docs/DECISIONS.md` #26). 40-48px on the word card. The `opsz` axis is loaded, so headwords get the display optical size automatically; the `WONK` axis is loaded only to pin it to 0 (no leaning h/n/m). Switching back is one line in `src/app/tokens.css`: `--en-serif: var(--nf-fraunces);` (or `var(--nf-newsreader)`).
+- Example sentences render **upright**, never italic: no italic font file is loaded, and a browser-synthesized (slanted) italic is not acceptable. Emphasis inside examples, if ever needed, uses weight, not slant.
 - Hebrew display: **Frank Ruhl Libre** (weights 500/700/900).
 - UI and translations: **Heebo** (400/500/700), base 17px (`1.0625rem`), line-height 1.6.
 - Numbers in UI use tabular figures where they change (timers, counters).
