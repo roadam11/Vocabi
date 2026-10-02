@@ -1,6 +1,6 @@
-/** Randomness helpers. The engine never calls Math.random(); callers inject an `Rng`. */
+/** Randomness helpers. The engine never uses a global random source; callers inject an `Rng`. */
 
-/** Returns a float in [0, 1), like Math.random(). */
+/** Returns a float in [0, 1). */
 export type Rng = () => number;
 
 /** Small seeded PRNG (mulberry32): deterministic tests, and a seedable rng for callers. */
