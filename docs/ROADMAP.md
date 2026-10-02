@@ -25,7 +25,7 @@ Accounts and tools ready: GitHub repo `vocabi` (private), Node LTS, pnpm, Claude
 
 ## M4 — Learning engine (test-first)
 - `src/engine/`: placement scoring, answer checking, distractors, FSRS wrapper, mastery, session builder, streaks — exactly as `docs/ENGINE.md`.
-**Accept:** every "Required test" in ENGINE §9 exists and passes, including the on-track hysteresis tests (`previousStatus` input, flapping test around the 95%/110% thresholds), the rolling-7-day streak-freeze tests, the distractor widen/practice-only fallback tests, and the `unmasteredTarget` cost-weighting test; coverage of `src/engine/` ≥ 90% lines; no `Date.now()`/`Math.random()` inside the engine (lint rule or grep check in CI).
+**Accept:** every "Required test" in ENGINE §9 exists and passes, including the on-track hysteresis tests (`previousStatus` input, flapping test around the 95%/110% thresholds), the rolling-7-day streak-freeze tests, the distractor widen/practice-only fallback tests, and the `unmasteredTarget` cost-weighting test; coverage of `src/engine/` ≥ 90% lines; no `Date.now()`/`Math.random()` inside the engine (lint rule or grep check in CI). The §9 `ProgressStore.exportAll()`/`importAll()` round-trip test is delivered with the store in M6.
 
 ## M5 — Content pipeline (Phase 0 scale)
 - `scripts/content/generate.ts` (Message Batches API), `export-review.ts` (CSV with BOM), `import-review.ts`.
