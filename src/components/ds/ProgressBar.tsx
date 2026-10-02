@@ -25,10 +25,13 @@ export function ProgressBar({
       aria-valuemin={0}
       aria-valuemax={max}
       aria-valuenow={clamped}
-      className={cx("h-1 w-full overflow-hidden rounded-chip bg-line", className)}
+      className={cx("relative h-1 w-full overflow-hidden rounded-chip bg-line", className)}
     >
+      {/* --line alone is under 3:1 against the page, so a --line-strong hairline marks the track's
+          extent (WCAG 1.4.11), as on MasteryRing; the accent fill covers it. */}
+      <div className="absolute start-0 end-0 top-1/2 h-px -translate-y-1/2 bg-line-strong" />
       <div
-        className="h-full rounded-chip bg-accent transition-[inline-size] duration-(--duration-slow) ease-out"
+        className="relative h-full rounded-chip bg-accent transition-[inline-size] duration-(--duration-slow) ease-out"
         style={{ inlineSize: `${pct}%` }}
       />
     </div>
