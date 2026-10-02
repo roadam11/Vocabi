@@ -1,0 +1,121 @@
+/*
+ * VOCABI design tokens — docs/DESIGN.md "Tokens". The single source of truth for color, radius,
+ * elevation, motion and font roles. src/design/contrast.test.ts parses this file: if a pair fails,
+ * fix the token here, not the component.
+ *
+ * Radii and the spacing scale are static and live in globals.css @theme.
+ *
+ * Theme: system preference by default; a manual override sets data-theme on <html> before first
+ * paint (src/lib/theme.ts). [data-theme] is also scopeable to a subtree (used on /design).
+ */
+
+:root {
+  color-scheme: light;
+
+  --bg: #f7f4ec;
+  --surface: #ffffff;
+  --surface-2: #fbfaf6;
+  --ink: #1c1a17;
+  --ink-2: #6f695e;
+  --line: #e2ddd0;
+  --line-strong: #8c8578;
+  --accent: #677042;
+  --accent-soft: #e8ead9;
+  --on-accent: #ffffff;
+  --success: #2c6e49;
+  --success-soft: #e6f0e8;
+  --danger: #a3492a;
+  --danger-soft: #f6e7e0;
+
+  /* Latin serif for English headwords. Switch candidates by changing this one line
+     (var(--nf-newsreader) | var(--nf-fraunces)) — docs/DESIGN.md "Typography". */
+  --en-serif: var(--nf-newsreader);
+
+  --elevation: 0 1px 2px rgb(28 26 23 / 0.04), 0 4px 16px rgb(28 26 23 / 0.06);
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --duration-flip: 400ms;
+  /* Light spring for the card flip (slight overshoot, settles). */
+  --motion-spring: linear(0, 0.35 12%, 0.78 26%, 1.03 42%, 1.06 52%, 1.02 68%, 0.995 82%, 1);
+  --press-scale: 0.98;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #121110;
+    --surface: #1c1a16;
+    --surface-2: #24211b;
+    --ink: #ece6d8;
+    --ink-2: #a39b8b;
+    --line: #37322a;
+    --line-strong: #756e61;
+    --accent: #a9b377;
+    --accent-soft: #2b2d20;
+    --on-accent: #121110;
+    --success: #5fb383;
+    --success-soft: #1b2a20;
+    --danger: #dc7c5d;
+    --danger-soft: #32211a;
+
+    --elevation: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  }
+}
+
+/* Same values as the system-dark block above (asserted by contrast.test.ts). */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #121110;
+  --surface: #1c1a16;
+  --surface-2: #24211b;
+  --ink: #ece6d8;
+  --ink-2: #a39b8b;
+  --line: #37322a;
+  --line-strong: #756e61;
+  --accent: #a9b377;
+  --accent-soft: #2b2d20;
+  --on-accent: #121110;
+  --success: #5fb383;
+  --success-soft: #1b2a20;
+  --danger: #dc7c5d;
+  --danger-soft: #32211a;
+
+  --elevation: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+}
+
+/* A light subtree inside a dark page (scoped preview on /design). */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f7f4ec;
+  --surface: #ffffff;
+  --surface-2: #fbfaf6;
+  --ink: #1c1a17;
+  --ink-2: #6f695e;
+  --line: #e2ddd0;
+  --line-strong: #8c8578;
+  --accent: #677042;
+  --accent-soft: #e8ead9;
+  --on-accent: #ffffff;
+  --success: #2c6e49;
+  --success-soft: #e6f0e8;
+  --danger: #a3492a;
+  --danger-soft: #f6e7e0;
+
+  --elevation: 0 1px 2px rgb(28 26 23 / 0.04), 0 4px 16px rgb(28 26 23 / 0.06);
+}
+
+/* docs/DESIGN.md "Motion": reduced motion → fades ≤ 100ms, no transforms (components drop them). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 100ms;
+    --duration-base: 100ms;
+    --duration-slow: 100ms;
+    --duration-flip: 100ms;
+    --press-scale: 1;
+  }
+}

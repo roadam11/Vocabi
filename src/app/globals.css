@@ -1,15 +1,93 @@
 @import "tailwindcss";
+@import "./tokens.css";
 
-/* Design tokens (colors, radii, spacing, motion) arrive in M2 — docs/DESIGN.md. */
+/* Only design tokens are available as colors: Tailwind's default palette is removed so a raw
+   color class (bg-red-500, text-white…) fails to compile into anything (CLAUDE.md non-negotiables). */
+@theme {
+  --color-*: initial;
+
+  /* docs/DESIGN.md: card 16, control 12, chip 999. */
+  --radius-card: 1rem;
+  --radius-control: 0.75rem;
+  --radius-chip: 999px;
+
+  /* Spacing keeps Tailwind's 0.25rem step. Use only the DESIGN.md scale 4/8/12/16/24/32/48 =
+     steps 1/2/3/4/6/8/12; 11 (44px) is reserved for minimum tap targets. */
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Theme-dependent values resolve at use time from tokens.css. */
 @theme inline {
-  --font-sans: var(--font-heebo), system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans: var(--nf-heebo), system-ui, sans-serif;
+  --font-display-he: var(--nf-frank-ruhl), var(--nf-heebo), serif;
+  --font-en-serif: var(--en-serif), Georgia, serif;
+  /* Both candidates, for the side-by-side on /design only. */
+  --font-newsreader: var(--nf-newsreader), Georgia, serif;
+  --font-fraunces: var(--nf-fraunces), Georgia, serif;
+
+  --shadow-soft: var(--elevation);
+  --ease-spring: var(--motion-spring);
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
+/*
+ * Interaction-state variants. Components use ui-hover:/ui-active: instead of hover:/active: so the
+ * /design showcase can render a state statically by wrapping an example in data-demo="hover|active"
+ * — one code path for the real state and the demo.
+ */
+@custom-variant ui-hover {
+  @media (hover: hover) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
+      @slot;
+    }
+  }
+  [data-demo="hover"] & {
+    @slot;
+  }
 }
 
-body {
-  font-size: 1.0625rem;
-  line-height: 1.6;
+@custom-variant ui-active {
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    @slot;
+  }
+  [data-demo="active"] & {
+    @slot;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    background-color: var(--bg);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  /* docs/DESIGN.md "Accessibility": focus-visible ring in --accent. The 2px offset lets the page
+     background separate the ring from accent-filled controls (primary button). */
+  :focus-visible,
+  [data-demo="focus"] :is(button, input, a, [tabindex]) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }

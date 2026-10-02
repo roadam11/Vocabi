@@ -8,7 +8,7 @@ const heebo = Heebo({
   subsets: ["hebrew", "latin"],
   weight: ["400", "500", "700"],
   display: "swap",
-  variable: "--font-heebo",
+  variable: "--nf-heebo",
 });
 
 export const metadata: Metadata = {
