@@ -29,7 +29,7 @@ Display states per sense: `new` → `learning` → `recognized` (recognition pas
 - Pseudowords are pronounceable non-words (e.g. "brindolate"). `content:check` must prove none is a real word or inflection in the lexicon/word list.
 ### Flow
 - Yes/no: "do you know this word?". Items interleaved; at least 4 pseudowords inside the first 20 items; bands roughly ascending. Implementation: real items in strictly ascending band blocks B1 → B5 → ACAD (ACAD ranks above 3000), 5 of the 10 pseudowords at random slots 2-20 and the rest at random later slots; the first item is always real (`docs/DECISIONS.md` #32).
-- Early stop: if two consecutive bands have real-word yes-rate ≤ 0.20, skip the remaining higher bands (`truncated = true`) — but only after ≥ 4 pseudowords were answered. Checked after every answer against the last two *completed* bands, so it can also fire when the 4th pseudoword arrives later. Truncation also skips the remaining pseudowords: the test goes straight to verification (`docs/DECISIONS.md` #32).
+- Early stop: if two consecutive bands have real-word yes-rate ≤ 0.20, skip the remaining higher bands (`truncated = true`) — but only after ≥ 4 pseudowords were answered. Checked after every answer against the last two *completed* bands, so it can also fire when the 4th pseudoword arrives later. It never fires once the last band is complete (no higher band is left to skip). Truncation also skips the remaining pseudowords: the test goes straight to verification (`docs/DECISIONS.md` #32).
 - Verification: up to 4 MCQs drawn from real words answered "yes" in B3-B5/ACAD.
 - State is persisted after every answer; reload resumes at the same item. No back navigation.
 ### Scoring
@@ -38,6 +38,7 @@ Display states per sense: `new` → `learning` → `recognized` (recognition pas
 - Corrected knowledge per band: `p_b = clamp((h_b − f) / (1 − f), 0, 1)`; if `f === 1`, set `p_b = 0` (no division by zero) and `reliable = false`.
 - Estimate: `known = Σ p_b × size_b`.
 - Interval: per band use smoothed `p̃ = (p_b·n_b + 1) / (n_b + 2)`, `var_b = size_b² · p̃(1 − p̃) / n_b`; `sd = √Σ var_b`; `[known − 1.645·sd, known + 1.645·sd]`, clamped to `[0, Σ size_b]`, low rounded down and high rounded up to the nearest 250, then clamped again (Σ size_b comes from data and need not be a multiple of 250). Skipped bands add 0 to `known` and `0.15 × size_b` to the high bound (CALIBRATE). `var_b` is computed only for bands that were fully answered (`n_b` is always exactly 5 for an answered band — bands are skipped wholesale by the early-stop rule, never partially, so `n_b` is never between 1 and 4). Skipped bands (`n_b = 0`) never enter the `var_b`/`sd` sum at all; they are handled exclusively by the separate `0.15 × size_b` high-bound addition above. This is a deliberate design, not a division-by-zero gap (`docs/DECISIONS.md` #12).
+- Scoring runs only on a finished or early-stopped test (the engine throws otherwise), so every answered band has all its items and every unanswered band was skipped.
 - Output: `{ low, high, perBand: [{ band, p }], reliable, truncated }`; `perBand` lists all 6 bands (skipped ones with `p = 0`). The UI shows a range and never a single number; `known` is available only through the separate `estimateKnown(perBand, sizes)` helper, used by tests (`docs/DECISIONS.md` #33).
 
 ## 5. Answer checking (production layer)

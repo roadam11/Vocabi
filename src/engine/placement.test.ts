@@ -83,6 +83,7 @@ describe("buildPlacementPlan (docs/ENGINE.md §4 Bank/Flow)", () => {
   });
 
   it("puts at least 4 pseudowords inside the first 20 items, never first", () => {
+    expect(PLACEMENT.pseudoInFirstWindow).toBeGreaterThanOrEqual(PLACEMENT.minPseudoInFirst);
     for (const plan of plans) {
       const early = plan.slice(0, 20).filter((s) => s.kind === "pseudo").length;
       expect(early).toBeGreaterThanOrEqual(PLACEMENT.minPseudoInFirst);
@@ -151,6 +152,14 @@ describe("nextPlacementStep: resume and early stop", () => {
     expect(all.at(-1)!.id).toBe("p3");
   });
 
+  it("does not stop after the last band: nothing higher is left to skip", () => {
+    // B1-B4 all yes, B5 and ACAD all no, 6 pseudowords still to come after ACAD completes.
+    const plan = handPlan([2, 6, 10, 14, 34, 35, 36, 37, 38, 39]);
+    const answers = answer(plan, (s) => s.kind === "real" && !["B5", "ACAD"].includes(s.band));
+    expect(answers).toHaveLength(40);
+    expect(nextPlacementStep(plan, answers)).toEqual({ type: "finished", truncated: false });
+  });
+
   it("a band at exactly 20% counts as low; 40% does not", () => {
     const at = (rate: number) => (s: PlacementStep) =>
       s.kind === "real" && s.band !== "B1" && Number(s.id.split("-")[1]) < rate * 5;
@@ -211,8 +220,8 @@ describe("scorePlacement (docs/ENGINE.md §4 Scoring, §9)", () => {
   });
 
   it("fewer than 4 pseudowords answered → unreliable", () => {
-    const plan = handPlan([3, 30, 31, 32, 33]);
-    const answers = answer(plan, () => true, 25);
+    const plan = handPlan([3, 30, 31]); // only 3 pseudowords in the whole test
+    const answers = answer(plan, (s) => s.kind === "real");
     expect(
       scorePlacement({ plan, answers, verification: noVerification, bandSizes: sizes }).reliable,
     ).toBe(false);
@@ -260,6 +269,10 @@ describe("scorePlacement (docs/ENGINE.md §4 Scoring, §9)", () => {
     expect(r.perBand.find((b) => b.band === "ACAD")!.p).toBe(0);
   });
 
+  it("refuses to score an unfinished test (unreached bands are not skipped bands)", () => {
+    expect(() => score(answer(fullPlan, () => true, 12))).toThrow(/unfinished/);
+  });
+
   it("returns exactly { low, high, perBand, reliable, truncated } — never a single number", () => {
     const r = score(answer(fullPlan, () => false));
     expect(Object.keys(r).sort()).toEqual(["high", "low", "perBand", "reliable", "truncated"]);
@@ -279,13 +292,13 @@ describe("scorePlacement properties (fast-check)", () => {
     fc.assert(
       fc.property(
         fc.integer(),
-        fc.array(fc.boolean(), { minLength: 0, maxLength: 40 }),
+        fc.array(fc.boolean(), { minLength: 40, maxLength: 40 }),
         sizesArb,
         fc.nat({ max: 4 }),
         fc.nat({ max: 4 }),
         (seed, yeses, bandSizes, correct, extra) => {
           const plan = buildPlacementPlan(bank, pseudos, mulberry32(seed));
-          const answers = answer(plan, (_, i) => yeses[i] ?? false, yeses.length);
+          const answers = answer(plan, (_, i) => yeses[i] ?? false);
           const r = scorePlacement({
             plan,
             answers,

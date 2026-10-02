@@ -95,7 +95,8 @@ function replay(plan: readonly PlacementStep[], answers: readonly PlacementAnswe
     tally.n++;
     if (a.yes) tally.yes++;
     if (step.kind === "real" && tally.n === planned.get(step.band)) completed.push(step.band);
-    truncated = earlyStop(completed, bands, pseudo);
+    // Only while a higher band remains: after the last band there is nothing to skip.
+    truncated = completed.length < planned.size && earlyStop(completed, bands, pseudo);
   }
   return { bands, pseudo, truncated, answered };
 }
@@ -157,7 +158,10 @@ export function estimateKnown(perBand: readonly { band: Band; p: number }[], siz
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
-/** §4 Scoring: guessing-corrected per-band knowledge and a rounded, clamped interval. */
+/**
+ * §4 Scoring: guessing-corrected per-band knowledge and a rounded, clamped interval. Only for a
+ * finished (or early-stopped) test; throws otherwise.
+ */
 export function scorePlacement({
   plan,
   answers,
@@ -170,7 +174,12 @@ export function scorePlacement({
   verification: { correct: number; total: number };
   bandSizes: BandSizes;
 }): PlacementResult {
-  const { bands, pseudo, truncated } = replay(plan, answers);
+  const { bands, pseudo, truncated, answered } = replay(plan, answers);
+  // Score only a finished test: an unreached band would look skipped, a partial one would enter
+  // the variance with n_b < 5 (§4 relies on n_b being all of the band's items, or 0).
+  if (!truncated && answered < plan.length) {
+    throw new Error(`placement: cannot score an unfinished test (${answered}/${plan.length})`);
+  }
   const f = rate(pseudo);
 
   const reliable =
