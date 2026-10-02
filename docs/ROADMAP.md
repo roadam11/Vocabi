@@ -30,6 +30,7 @@ Accounts and tools ready: GitHub repo `vocabi` (private), Node LTS, pnpm, Claude
 ## M5 — Content pipeline (Phase 0 scale)
 - `scripts/content/generate.ts` (Message Batches API), `export-review.ts` (CSV with BOM), `import-review.ts`.
 - `scripts/content/pseudowords.ts`: reject candidates within Damerau-Levenshtein distance ≤2 of any word/inflection among the top ~20,000 most frequent English words, and enforce length 7-10 characters (`docs/DECISIONS.md` #7).
+- `content/placement/bands.json`: band sizes in lemmas from the disjoint partition (ACAD = NAWL lemmas ranked > 3000, removed from B4/B5; `docs/DECISIONS.md` #31), with its builder script, Zod check in `content:check`, and loader wiring.
 - `content/lexicon/distractors.json`: the distractor-only lexicon backing recognition-MCQ generation when shipping senses alone don't supply 3 eligible distractors (`docs/DECISIONS.md` #3).
 - Produce: ~150 AMIRNET starter senses + placement bank (real items per band + 10+ pseudowords). Roie reviews every row, including the slang/brand/other-language pseudoword check.
 **Accept:** all shipping senses `verified`; `content:check` passes with zero errors (including the new recognition-distractor-count error); `content/SOURCES.md` lists every source list used.
