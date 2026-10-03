@@ -1,0 +1,12 @@
+﻿original,annotation,annotation_word,resolution,headword,reason,decision
+bire,or,bare,pending,,"""or bare"" is ambiguous",
+deffer,or,defer,pending,,"""or defer"" is ambiguous",
+undervent,looks-like,underwent,applied,underwent,"looks-like ""underwent"", in reference lists",
+incess,looks-like,incessant,pending,,"""incessant"" not in reference lists",
+cumbed,typo-for,succumb,pending,,"""succumb"" not in reference lists",
+warth,typo-for,wrath,applied,wrath,"typo-for ""wrath"", in reference lists",
+alleg,or,allege,pending,,"""or allege"" is ambiguous",
+scantest,written-as,scantiest,kept,scantest,written-as: headword kept,
+sword,written-as,sward,kept,sword,written-as: headword kept,
+hampered,corrected-from,hamperded,kept,hampered,corrected-from: headword kept,
+cunning,corrected-from,cunnig,kept,cunning,corrected-from: headword kept,
