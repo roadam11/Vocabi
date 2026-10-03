@@ -35,7 +35,7 @@ export function ineligible(row: LemmaRow, ctx: BankContext): string | null {
   return null;
 }
 
-/** `perBand` eligible lemmas per band, sampled with a seeded shuffle of the rank-ordered pool. */
+/** `perBand` eligible lemmas per band: the first eligible ones of a seeded shuffle of the band. */
 export function sampleBank(
   rows: readonly LemmaRow[],
   ctx: BankContext,
@@ -44,12 +44,14 @@ export function sampleBank(
   seed: number,
 ): PlacementItem[] {
   return bands.flatMap((b, i) => {
-    const pool = rows
-      .filter((r) => ctx.band.get(r.lemma) === b && ineligible(r, ctx) === null)
-      .sort((x, y) => x.rank - y.rank)
+    // Shuffle the whole band, then take the first eligible lemmas: excluding one more word
+    // replaces only that word instead of reshuffling the band (docs/DECISIONS.md #59).
+    const band = rows.filter((r) => ctx.band.get(r.lemma) === b).sort((x, y) => x.rank - y.rank);
+    const picked = shuffle(band, mulberry32(seed + i))
+      .filter((r) => ineligible(r, ctx) === null)
       .map((r) => r.lemma);
-    if (pool.length < perBand) throw new Error(`${b}: only ${pool.length} eligible lemmas`);
-    return shuffle(pool, mulberry32(seed + i))
+    if (picked.length < perBand) throw new Error(`${b}: only ${picked.length} eligible lemmas`);
+    return picked
       .slice(0, perBand)
       .sort()
       .map((lemma) => ({ id: `${b}-${lemmaSlug(lemma)}`, lemma, band: b }));

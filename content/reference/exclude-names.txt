@@ -1,21 +1,31 @@
-# Names, proper adjectives, abbreviations and bound prefixes that WordNet does not flag: invalid yes/no items.
+# Invalid yes/no items WordNet does not flag: names, proper adjectives, abbreviations, bound prefixes, malformed forms.
 # Curated for VOCABI (internal; to be confirmed by Roie).
 bio
 bobby
 carol
 christian
 chuck
+con
 corp
 frank
 freeman
 gen
+glen
 hank
+headquarter
 khan
+lense
 madame
 malik
+nick
 non
 potter
+pre
+reeve
+ref
+rep
 rev
 smith
+trans
 victor
 wont

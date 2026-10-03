@@ -8,10 +8,6 @@
     "text": "flaistent"
   },
   {
-    "id": "p-pelpimpity",
-    "text": "pelpimpity"
-  },
-  {
     "id": "p-troufol",
     "text": "troufol"
   },
@@ -66,10 +62,6 @@
   {
     "id": "p-groantify",
     "text": "groantify"
-  },
-  {
-    "id": "p-noastish",
-    "text": "noastish"
   },
   {
     "id": "p-lundify",
@@ -156,20 +148,8 @@
     "text": "slerkish"
   },
   {
-    "id": "p-drairwost",
-    "text": "drairwost"
-  },
-  {
     "id": "p-sleamish",
     "text": "sleamish"
-  },
-  {
-    "id": "p-londity",
-    "text": "londity"
-  },
-  {
-    "id": "p-saineesify",
-    "text": "saineesify"
   },
   {
     "id": "p-touvisful",
@@ -198,5 +178,25 @@
   {
     "id": "p-spoanance",
     "text": "spoanance"
+  },
+  {
+    "id": "p-plaiproule",
+    "text": "plaiproule"
+  },
+  {
+    "id": "p-braisture",
+    "text": "braisture"
+  },
+  {
+    "id": "p-tinrondery",
+    "text": "tinrondery"
+  },
+  {
+    "id": "p-premmoul",
+    "text": "premmoul"
+  },
+  {
+    "id": "p-bleampent",
+    "text": "bleampent"
   }
 ]

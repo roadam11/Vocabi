@@ -67,4 +67,18 @@ describe("placement bank eligibility", () => {
     expect(a.every((i) => i.id === `B1-${i.lemma}` && i.band === "B1")).toBe(true);
     expect(() => sampleBank(rows, ctx(rows), ["B1"], 51, 7)).toThrow(/only 50/);
   });
+
+  it("is stable under exclusions: excluding a sampled word replaces only that word", () => {
+    const letters = "abcdefghijklmnopqrstuvwxy";
+    const rows = Array.from({ length: 50 }, (_, i) =>
+      row(`word${letters[i % 25]}${letters[Math.floor(i / 25)]}`, i + 1),
+    );
+    const before = sampleBank(rows, ctx(rows), ["B1"], 10, 7).map((i) => i.lemma);
+    const gone = before[3]!;
+    const after = sampleBank(rows, ctx(rows, { excluded: new Set([gone]) }), ["B1"], 10, 7).map(
+      (i) => i.lemma,
+    );
+    expect(after).not.toContain(gone);
+    expect(after.filter((l) => !before.includes(l))).toHaveLength(1);
+  });
 });
