@@ -26,19 +26,18 @@ export type BankContext = {
 export const LOOKALIKE_RATIO = 10;
 
 /**
- * The most frequent lemma one letter added or removed at the end of `lemma` (rout → route,
- * sometime → sometimes) if it is at least LOOKALIKE_RATIO times more frequent: a "yes" would
- * mean the learner recognized that word, not this one (docs/DECISIONS.md #60).
+ * The most frequent lemma that is `lemma` plus one letter at the end (rout → route, sometime →
+ * sometimes) if it is at least LOOKALIKE_RATIO times more frequent: a "yes" would mean the
+ * learner recognized that word, not this one (docs/DECISIONS.md #60, #61).
  */
 export function endLetterLookalike(
   lemma: string,
   freq: ReadonlyMap<string, number>,
 ): { word: string; ratio: number } | null {
   const own = freq.get(lemma) ?? 0;
-  const neighbours = [
-    lemma.slice(0, -1),
-    ..."abcdefghijklmnopqrstuvwxyz".split("").map((c) => lemma + c),
-  ];
+  // One direction only: removing a letter (barn → bar, provider → provide) finds distinct words
+  // or transparent derivations whose knowledge is real (docs/DECISIONS.md #61).
+  const neighbours = "abcdefghijklmnopqrstuvwxyz".split("").map((c) => lemma + c);
   let best: { word: string; ratio: number } | null = null;
   for (const word of neighbours) {
     const f = freq.get(word);

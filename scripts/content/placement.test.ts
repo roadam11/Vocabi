@@ -83,23 +83,42 @@ describe("placement bank eligibility", () => {
     expect(after.filter((l) => !before.includes(l))).toHaveLength(1);
   });
 
-  it("skips a lemma one end-letter away from a lemma 10x more frequent (rout/route, sometime/sometimes)", () => {
+  it("skips L when L + one letter is a lemma 10x more frequent (sometime/sometimes, rout/route)", () => {
     const rows = [
       row("route", 1, { freq: 100 }),
       row("rout", 2, { freq: 5 }), // + e → route, 20x
       row("sometimes", 3, { freq: 80 }),
-      row("sometime", 4, { freq: 4 }), // − s ← sometimes, 20x
+      row("sometime", 4, { freq: 4 }), // + s → sometimes, 20x
       row("ten", 5, { freq: 50 }), // + d → tend, rarer: stays
-      row("tend", 6, { freq: 10 }), // − d → ten, only 5x: stays
-      row("plan", 7, { freq: 30 }),
-      row("plane", 8, { freq: 3 }), // exactly 10x: excluded
+      row("tend", 6, { freq: 10 }),
+      row("plan", 7, { freq: 3 }),
+      row("plane", 8, { freq: 30 }), // exactly 10x: plan is excluded
+      row("bar", 9, { freq: 110 }),
+      row("barn", 10, { freq: 10 }), // − n → bar (11x): removal never counts
+      row("provide", 11, { freq: 140 }),
+      row("provider", 12, { freq: 10 }), // − r → provide (14x): a real, distinct word
     ];
     const c = ctx(rows);
-    expect(ineligible(rows[1]!, c)).toBe('one letter from "route" (20x more frequent)');
-    expect(ineligible(rows[3]!, c)).toBe('one letter from "sometimes" (20x more frequent)');
-    expect(ineligible(rows[4]!, c)).toBeNull();
-    expect(ineligible(rows[5]!, c)).toBeNull();
-    expect(ineligible(rows[7]!, c)).toBe('one letter from "plan" (10x more frequent)');
-    expect(ineligible(rows[0]!, c)).toBeNull();
+    const why = (lemma: string) =>
+      ineligible(
+        rows.find((r) => r.lemma === lemma)!,
+        c,
+      );
+    expect(why("rout")).toBe('one letter from "route" (20x more frequent)');
+    expect(why("sometime")).toBe('one letter from "sometimes" (20x more frequent)');
+    expect(why("plan")).toBe('one letter from "plane" (10x more frequent)');
+    for (const ok of [
+      "route",
+      "sometimes",
+      "ten",
+      "tend",
+      "plane",
+      "bar",
+      "barn",
+      "provide",
+      "provider",
+    ]) {
+      expect(why(ok)).toBeNull();
+    }
   });
 });
