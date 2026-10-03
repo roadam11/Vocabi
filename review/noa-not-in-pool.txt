@@ -1,4 +1,4 @@
-# Noa headwords not in NAWL ∪ CEFR-J B2 (556 of 849); they stay candidates via Noa's list.
+# Noa headwords not in NAWL ∪ CEFR-J B2 (558 of 852); they stay candidates via Noa's list.
 abbreviated	(abbreviate)
 abduct
 abduction
@@ -25,6 +25,7 @@ affinity
 afflict
 ajar
 alight
+allege
 allusion
 alteration
 alumni	(alumnus)
@@ -261,7 +262,6 @@ ill-fated
 illiteracy
 illiterate
 imbue
-imburse
 impair
 impartially
 impenetrable
@@ -269,6 +269,7 @@ implausible
 implore
 impute
 in vain
+incessant
 incite
 inconspicuous
 incorporate
@@ -348,8 +349,8 @@ obsolete
 obstinate
 obstruct
 obtuse
+omission
 omit
-ommision
 omniscient
 opaque
 opulent
@@ -457,7 +458,7 @@ ripe
 rivalry
 rod
 salvage
-scantest	(scant)
+scanty
 scenic
 scold
 scope
@@ -487,6 +488,7 @@ submerge
 subordinate
 subterranean
 successor
+succumb
 summit
 summon
 superficial
@@ -556,16 +558,14 @@ wrestle
 wrung	(wring)
 yarn
 
-# Noa headwords excluded from the candidate pool (12):
+# Noa headwords excluded from the candidate pool (10):
 accord	NGSL top 1000
 accorded	NGSL top 1000
 conference	NGSL top 1000
 draw	NGSL top 1000
 drawn	NGSL top 1000
 form	NGSL top 1000
-imburse	no usable POS (prefix, determiner, pronoun, unknown)
 mine	NGSL top 1000
-ommision	no usable POS (prefix, determiner, pronoun, unknown)
 refer	NGSL top 1000
 reference	NGSL top 1000
 reflect	NGSL top 1000

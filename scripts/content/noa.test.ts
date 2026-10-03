@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { docxParagraphs, extractNoa, normalizeHeadword, parseLine } from "./noa";
+import { docxParagraphs, extractNoa, normalizeHeadword, parseDecisions, parseLine } from "./noa";
 
 const known = new Set(["wrath", "underwent", "allege", "defer"]);
 
@@ -67,5 +67,31 @@ describe("Noa's list: English headwords only", () => {
     const r = extractNoa(["Vital – חיוני", "vital – חיוני", "merely – רק"], known);
     expect(r.headwords).toEqual(["merely", "vital"]);
     expect(r.counts).toEqual({ lines: 3, duplicates: 1, unique: 2, pending: 0 });
+  });
+
+  it("human decisions override the automatic resolution, including drops and unannotated typos", () => {
+    const decisions = parseDecisions(
+      "# original\theadword\ndeffer\tdefer\nommision\tomission\nimburse\t-\nsword\tsword\n",
+    );
+    const r = extractNoa(
+      [
+        "deffer (או defer) – לדחות",
+        "ommision – השמטה",
+        "imburse – להחזיר",
+        "sword (נכתב sward) – חרב",
+        "defer – לדחות",
+      ],
+      known,
+      decisions,
+    );
+    expect(r.resolutions.map((x) => [x.original, x.status, x.headword])).toEqual([
+      ["deffer", "decided", "defer"],
+      ["ommision", "decided", "omission"],
+      ["imburse", "decided", null],
+      ["sword", "decided", "sword"],
+      ["defer", "plain", "defer"],
+    ]);
+    expect(r.headwords).toEqual(["defer", "omission", "sword"]);
+    expect(r.counts).toMatchObject({ duplicates: 1, unique: 3, pending: 0 });
   });
 });

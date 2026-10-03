@@ -74,7 +74,7 @@ export type Resolution = {
   annotation?: Headword["annotation"];
   /** The headword kept for the list, or null while pending human review. */
   headword: string | null;
-  status: "plain" | "applied" | "kept" | "pending";
+  status: "plain" | "applied" | "kept" | "pending" | "decided";
   reason: string;
 };
 
@@ -116,11 +116,43 @@ export type NoaList = {
   counts: { lines: number; duplicates: number; unique: number; pending: number };
 };
 
-export function extractNoa(paragraphs: readonly string[], known: ReadonlySet<string>): NoaList {
+/**
+ * Roie's decisions (content/reference/candidates/noa-decisions.tsv): original headword → the
+ * headword to use, or null to drop it. They override the automatic resolution, annotated or not.
+ */
+export type NoaDecisions = ReadonlyMap<string, string | null>;
+
+export function parseDecisions(text: string): NoaDecisions {
+  return new Map(
+    text
+      .split("\n")
+      .filter((l) => l.trim() && !l.startsWith("#"))
+      .map((l) => {
+        const [original, headword] = l.split("\t").map((x) => x.trim());
+        return [original!, !headword || headword === "-" ? null : headword] as const;
+      }),
+  );
+}
+
+export function extractNoa(
+  paragraphs: readonly string[],
+  known: ReadonlySet<string>,
+  decisions: NoaDecisions = new Map(),
+): NoaList {
   const resolutions = paragraphs
     .map(parseLine)
     .filter((h): h is Headword => h !== null)
-    .map((h) => resolve(h, known));
+    .map((h) => resolve(h, known))
+    .map((r): Resolution => {
+      if (!decisions.has(r.original)) return r;
+      const headword = decisions.get(r.original)!;
+      return {
+        ...r,
+        headword,
+        status: "decided",
+        reason: headword ? `decided: ${headword}` : "decided: dropped",
+      };
+    });
   const kept = resolutions.flatMap((r) => (r.headword ? [r.headword] : []));
   const headwords = [...new Set(kept)].sort();
   const pending = resolutions.filter((r) => r.status === "pending").length;

@@ -1,0 +1,11 @@
+# Roie's decisions on Noa's headwords (2026-10-03), applied by pnpm content:noa (docs/DECISIONS.md #56).
+# original<TAB>headword ("-" = drop). Overrides the automatic annotation handling.
+bire	bare
+deffer	defer
+alleg	allege
+incess	incessant
+cumbed	succumb
+ommision	omission
+scantest	scanty
+sword	sword
+imburse	-

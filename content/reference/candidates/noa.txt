@@ -30,6 +30,7 @@ affirm
 afflict
 ajar
 alight
+allege
 allusion
 alter
 alteration
@@ -69,6 +70,7 @@ avert
 bandage
 banish
 barber
+bare
 barren
 bemoaning
 bend
@@ -381,7 +383,6 @@ ill-fated
 illiteracy
 illiterate
 imbue
-imburse
 immune
 impair
 impartial
@@ -398,6 +399,7 @@ impute
 in vain
 inadequate
 incentive
+incessant
 incidence
 incite
 incline
@@ -525,8 +527,8 @@ obstruct
 obtain
 obtuse
 offspring
+omission
 omit
-ommision
 omniscient
 onset
 opaque
@@ -696,7 +698,7 @@ rod
 route
 sage
 salvage
-scantest
+scanty
 scatter
 scenic
 scold
@@ -740,6 +742,7 @@ substance
 subterranean
 subtle
 successor
+succumb
 summit
 summon
 superficial

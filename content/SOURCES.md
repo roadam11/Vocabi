@@ -47,6 +47,6 @@ WordNet "morphy" lemmatization of forms outside the NGSL/NAWL families, and the 
 - `exclude-offensive.txt`, `exclude-he-loanwords.txt`, `exclude-names.txt`: curated by VOCABI for the placement bank (`docs/DECISIONS.md` #53); to be confirmed by Roie.
 
 ## Noa's word list (private contribution)
-- **File:** `candidates/noa.txt` — 849 unique English headwords (910 headword lines, 56 duplicate lines removed: 54 headwords appear more than once, 4 of them only after normalization: numbering, case, a trailing annotation). Extracted 2026-10-03 by `pnpm content:noa` from `review/input/noa.docx` (git-ignored).
+- **File:** `candidates/noa.txt` — 852 unique English headwords (910 headword lines, 57 duplicate lines removed: 54 headwords appear more than once, 4 of them only after normalization, plus "deffer" → defer, already listed). Extracted 2026-10-03 by `pnpm content:noa` from `review/input/noa.docx` (git-ignored).
 - **Permission:** confirmed by Roie (2026-10-03) for use as a VOCABI candidate list.
-- **Scope:** English headwords ONLY. Her Hebrew translations are never extracted, stored or used. 11 annotated spellings are listed in `review/noa-typos.csv` (2 applied, 4 kept, 5 pending review).
+- **Scope:** English headwords ONLY. Her Hebrew translations are never extracted, stored or used. Spelling fixes: 2 applied automatically (undervent → underwent, warth → wrath), 2 kept (hampered, cunning), and Roie's decisions in `candidates/noa-decisions.tsv` (bire → bare, deffer → defer, alleg → allege, incess → incessant, cumbed → succumb, ommision → omission, scantest → scanty, sword kept, imburse dropped since reimburse is listed); all logged in `review/noa-typos.csv`.

@@ -1,12 +1,13 @@
 /**
  * `pnpm content:noa` — English headwords from review/input/noa.docx (untracked: it holds Noa's
  * Hebrew translations) → content/reference/candidates/noa.txt, plus review/noa-typos.csv listing
- * every annotated item and its resolution (noa.ts). Never writes any Hebrew.
+ * every annotated or decided item and its resolution (noa.ts). Roie's decisions live in
+ * content/reference/candidates/noa-decisions.tsv. Never writes any Hebrew.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { unzipSync } from "fflate";
-import { extractNoa, docxParagraphs } from "./noa";
+import { extractNoa, docxParagraphs, parseDecisions } from "./noa";
 import { parseCefrj, parseFamilies, readSource, REFERENCE_DIR, SOURCES } from "./sources";
 
 const ROOT = resolve(import.meta.dirname, "../..");
@@ -24,7 +25,12 @@ const known = new Set([
   ...parseCefrj(readSource(SOURCES.cefrj)).map((e) => e.headword),
   ...parseFamilies(readSource(SOURCES.nawlFamilies)).flatMap((f) => [f.lemma, ...f.forms]),
 ]);
-const noa = extractNoa(docxParagraphs(new TextDecoder().decode(xml)), known);
+const decisions = parseDecisions(
+  readFileSync(join(REFERENCE_DIR, "candidates/noa-decisions.tsv"), "utf8"),
+);
+const noa = extractNoa(docxParagraphs(new TextDecoder().decode(xml)), known, decisions);
+const unused = [...decisions.keys()].filter((k) => !noa.resolutions.some((r) => r.original === k));
+if (unused.length > 0) throw new Error(`decisions for unknown headwords: ${unused.join(", ")}`);
 for (const w of noa.headwords) if (/[^\x20-\x7e]/.test(w)) throw new Error(`non-ASCII: ${w}`);
 
 mkdirSync(dirname(OUT), { recursive: true });
@@ -37,21 +43,20 @@ writeFileSync(
   ].join("\n") + "\n",
 );
 const csv = (s: string) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
-const annotated = noa.resolutions.filter((r) => r.annotation);
+const annotated = noa.resolutions.filter((r) => r.annotation || r.status === "decided");
 writeFileSync(
   TYPOS,
   "﻿" +
     [
-      "original,annotation,annotation_word,resolution,headword,reason,decision",
+      "original,annotation,annotation_word,resolution,headword,reason",
       ...annotated.map((r) =>
         [
           r.original,
-          r.annotation!.kind,
-          r.annotation!.word,
+          r.annotation?.kind ?? "",
+          r.annotation?.word ?? "",
           r.status,
           r.headword ?? "",
           r.reason,
-          "",
         ]
           .map(csv)
           .join(","),
@@ -60,4 +65,7 @@ writeFileSync(
     "\r\n",
 );
 console.log(JSON.stringify(noa.counts));
-for (const r of annotated) console.log(`${r.original} → ${r.headword ?? "(pending)"}: ${r.reason}`);
+for (const r of annotated)
+  console.log(
+    `${r.original} → ${r.headword ?? (r.status === "decided" ? "(dropped)" : "(pending)")}: ${r.reason}`,
+  );
