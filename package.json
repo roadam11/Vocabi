@@ -20,7 +20,9 @@
     "content:build-reference": "tsx scripts/content/build-reference.ts",
     "content:near-words": "tsx scripts/content/near-words.ts",
     "prepare": "simple-git-hooks",
-    "content:bands": "tsx scripts/content/build-bands.ts"
+    "content:bands": "tsx scripts/content/build-bands.ts",
+    "content:placement": "tsx scripts/content/build-placement.ts",
+    "content:pseudowords": "tsx scripts/content/build-pseudowords.ts"
   },
   "dependencies": {
     "next": "^16.3.8",

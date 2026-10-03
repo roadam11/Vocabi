@@ -4,7 +4,6 @@
  */
 import { isEligibleRecognitionDistractor } from "../../src/engine/distractors";
 import {
-  damerauLevenshtein,
   glossesCollide,
   normalizeEn,
   normalizeEnLoose,
@@ -20,7 +19,7 @@ import {
   Track,
 } from "../../src/content/schema";
 import { type BandInputs, computeBands } from "./bands";
-import { inflections } from "./inflect";
+import { pseudoContext, pseudowordProblems } from "./pseudo-rule";
 import { computeNearWords, referenceForms } from "./near";
 
 export const ERROR_CODES = [
@@ -62,9 +61,6 @@ export type Diagnostic = {
 // CALIBRATE-free limits straight from docs/CONTENT.md.
 const HE_PRIMARY_MAX = 40;
 const EXAMPLE_EN_MAX = 120;
-const PSEUDO_MIN = 7;
-const PSEUDO_MAX = 10;
-const PSEUDO_MIN_DISTANCE = 3; // DL ≤ 2 to a common word is a collision (docs/DECISIONS.md #7)
 const MIN_RECOGNITION_DISTRACTORS = 3;
 
 // ---- text predicates -------------------------------------------------------------------------
@@ -373,45 +369,19 @@ export function validateContent(
 
   // Rule 9: pseudowords.
   if (pseudos.length > 0) {
-    const lexiconWords = new Set(
-      [
-        ...senses.flatMap(({ value: s }) => [
-          s.lemma,
-          ...s.answers,
-          ...(s.family ?? []),
-          ...(s.synonyms ?? []),
-        ]),
-        ...lexicon.flatMap(({ value: l }) => [l.lemma, ...(l.family ?? []), ...(l.synonyms ?? [])]),
-        ...items.map(({ value: p }) => p.lemma),
-      ].flatMap((w) => inflections(normalizeEn(w))),
-    );
-    const pseudoRefForms = [...new Set(reference.flatMap((w) => inflections(normalizeEn(w))))];
-    const referenceSet = new Set(pseudoRefForms);
+    const ctx = pseudoContext(reference, [
+      ...senses.flatMap(({ value: s }) => [
+        s.lemma,
+        ...s.answers,
+        ...(s.family ?? []),
+        ...(s.synonyms ?? []),
+      ]),
+      ...lexicon.flatMap(({ value: l }) => [l.lemma, ...(l.family ?? []), ...(l.synonyms ?? [])]),
+      ...items.map(({ value: p }) => p.lemma),
+    ]);
     for (const { file, value: p } of pseudos) {
-      const t = normalizeEn(p.text);
-      const len = codePoints(t);
-      if (len < PSEUDO_MIN || len > PSEUDO_MAX) {
-        error(
-          file,
-          p.id,
-          "PSEUDO_LENGTH",
-          `"${p.text}" has ${len} characters; ${PSEUDO_MIN}-${PSEUDO_MAX} required`,
-        );
-      }
-      if (lexiconWords.has(t) || referenceSet.has(t)) {
-        error(file, p.id, "PSEUDO_REAL_WORD", `"${p.text}" is a real word or inflection`);
-        continue;
-      }
-      const near = pseudoRefForms.find(
-        (w) => damerauLevenshtein(t, w, PSEUDO_MIN_DISTANCE - 1) < PSEUDO_MIN_DISTANCE,
-      );
-      if (near) {
-        error(
-          file,
-          p.id,
-          "PSEUDO_NEAR_WORD",
-          `"${p.text}" is within distance ${PSEUDO_MIN_DISTANCE - 1} of "${near}"`,
-        );
+      for (const { code, message } of pseudowordProblems(p.text, ctx)) {
+        error(file, p.id, code, message);
       }
     }
   }
