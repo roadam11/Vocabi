@@ -8,8 +8,10 @@
  *    British spellings and irregular forms: colour → color, felt → feel). Headwords map to
  *    themselves; a form listed in several families goes to the first (NGSL by rank, then NAWL).
  * 2. A dictionary base word (WordNet 3.1, NGSL, NAWL, CEFR-J) is its own lemma.
- * 3. Otherwise the WordNet "morphy" lemmatizer (verb, then noun, then adjective); the first
- *    candidate that is a dictionary word wins. Nothing found → not a word (dropped).
+ * 3. Otherwise, for an -ing/-ed form, every WordNet verb whose spelling can produce it (plain,
+ *    e-drop, doubling) competes and the most frequent wins (routing → route, not rout;
+ *    docs/DECISIONS.md #63); any other form takes the WordNet "morphy" lemmatizer's first
+ *    dictionary candidate (verb, then noun, then adjective). Nothing found → dropped.
  * 4. A British base spelling folds to its American variant when that variant is a dictionary
  *    word and more frequent in wordfreq (organisation → organization), never for the exceptions.
  * Only lemmas on a source list, or dictionary words that WordNet does not write only capitalized,
@@ -29,6 +31,8 @@ export type LemmaInputs = {
   properOnly: ReadonlySet<string>;
   /** WordNet words that also have a capitalized (proper-noun) entry: "john", "mark". */
   properUse: ReadonlySet<string>;
+  /** WordNet verbs: only they can be the base of an -ing/-ed form in a frequency contest. */
+  verbs: ReadonlySet<string>;
   /** Morphological lemma candidates for a word (verb, noun, adjective), excluding the word. */
   lemmatize: (word: string) => string[];
 };
@@ -89,8 +93,42 @@ export function americanCandidate(word: string): string | null {
   return null;
 }
 
+/** A one-syllable base ending consonant-vowel-consonant doubles before -ing/-ed (hop → hopping). */
+const doublesFinal = (base: string) => /^[^aeiou]*[aeiou][bcdfgklmnprstvz]$/.test(base);
+
+/**
+ * Whether English spelling can turn `base` into `form` with -ing/-ed: plain (rout → routing),
+ * e-drop (route → routing), or doubling (hop → hopping, never hoping). Other forms (-s, -ies,
+ * irregulars) are left to the lemmatizer.
+ */
+export function canSpell(base: string, form: string): boolean {
+  for (const suf of ["ing", "ed"]) {
+    if (!form.endsWith(suf)) continue;
+    if (form === base + suf) return !doublesFinal(base);
+    if (base.endsWith("e") && form === base.slice(0, -1) + suf) return true;
+    if (form === base + base.at(-1) + suf) return doublesFinal(base);
+  }
+  return true;
+}
+
+/**
+ * Base lemma candidates of a form: the lemmatizer's (verb, noun, adjective), plus the -ing/-ed
+ * alternatives it does not try — with or without a final e, and undoubled (routing → rout,
+ * route; hopping → hop) — so that two bases that can both produce a form compete.
+ */
+function baseCandidates(form: string, lemmatize: (w: string) => string[]): string[] {
+  const out = [...lemmatize(form)];
+  const m = form.match(/^(.+?)(ing|ed)$/);
+  if (m) {
+    const stem = m[1]!;
+    out.push(stem, `${stem}e`);
+    if (/(.)\1$/.test(stem)) out.push(stem.slice(0, -1));
+  }
+  return [...new Set(out)].filter((c) => c !== form);
+}
+
 export function rankLemmas(input: LemmaInputs): LemmaRow[] {
-  const { dictionary, listed, properOnly, properUse, lemmatize } = input;
+  const { dictionary, listed, properOnly, properUse, verbs, lemmatize } = input;
   const formFreq = new Map(input.forms.map((f) => [f.form, f.freq]));
 
   const family = new Map<string, string>();
@@ -115,7 +153,19 @@ export function rankLemmas(input: LemmaInputs): LemmaRow[] {
     const hit = family.get(form);
     if (hit) return hit;
     if (dictionary.has(form)) return fold(form);
-    const base = lemmatize(form).find((c) => dictionary.has(c));
+    // -ing/-ed: every verb whose spelling can produce the form competes; the most frequent wins
+    // (routing → route, not rout). Anything else keeps the lemmatizer's first dictionary word.
+    const verbBases = /(ing|ed)$/.test(form)
+      ? baseCandidates(form, lemmatize).filter(
+          (c) => dictionary.has(c) && verbs.has(c) && canSpell(c, form),
+        )
+      : [];
+    const base =
+      verbBases.length > 0
+        ? verbBases.reduce((best, c) =>
+            (formFreq.get(c) ?? 0) > (formFreq.get(best) ?? 0) ? c : best,
+          )
+        : lemmatize(form).find((c) => dictionary.has(c));
     return base ? fold(base) : null;
   };
 

@@ -129,6 +129,7 @@ async function main() {
     listed,
     properOnly,
     properUse: wn.capital,
+    verbs: wn.verbs,
     lemmatize: (w) => [wink.verb(w), wink.noun(w), wink.adjective(w)].filter((c) => c !== w),
   });
   write(
@@ -145,12 +146,17 @@ async function main() {
 
 /**
  * Single words of every WordNet 3.1 synset, lowercased, split by whether WordNet writes them
- * lowercase ("john" = toilet) or capitalized ("Paris", "John"). Data lines: offset, lex file,
+ * lowercase ("john" = toilet) or capitalized ("Paris", "John"), plus the verbs (data.verb). Data lines: offset, lex file,
  * type, word count (hex), then word/lex-id pairs; adjective markers like "(a)" are dropped.
  */
-async function wordnetWords(): Promise<{ lower: Set<string>; capital: Set<string> }> {
+async function wordnetWords(): Promise<{
+  lower: Set<string>;
+  capital: Set<string>;
+  verbs: Set<string>;
+}> {
   const files = untar(gunzipSync(await download(WORDNET_URL, WORDNET_SHA256)));
   const lower = new Set<string>();
+  const verbs = new Set<string>();
   const capital = new Set<string>();
   for (const name of WORDNET_DATA) {
     const text = new TextDecoder().decode(files.get(name));
@@ -163,10 +169,11 @@ async function wordnetWords(): Promise<{ lower: Set<string>; capital: Set<string
         if (word.includes("_")) continue;
         const l = word.toLowerCase();
         (word === l ? lower : capital).add(l);
+        if (name.endsWith("data.verb")) verbs.add(l);
       }
     }
   }
-  return { lower, capital };
+  return { lower, capital, verbs };
 }
 
 /** Regular files of a (ustar) tar archive by path. */
