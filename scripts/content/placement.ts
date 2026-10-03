@@ -18,12 +18,42 @@ export type BankContext = {
    * does not flag. Never words a learner simply knows (loanwords): that would bias p_b.
    */
   excluded: ReadonlySet<string>;
+  /** Lemma → summed wordfreq frequency (lemmas-en.tsv), for the end-letter look-alike rule. */
+  freq: ReadonlyMap<string, number>;
 };
+
+/** A lemma at least this many times more frequent makes a one-end-letter neighbour invalid. */
+export const LOOKALIKE_RATIO = 10;
+
+/**
+ * The most frequent lemma one letter added or removed at the end of `lemma` (rout → route,
+ * sometime → sometimes) if it is at least LOOKALIKE_RATIO times more frequent: a "yes" would
+ * mean the learner recognized that word, not this one (docs/DECISIONS.md #60).
+ */
+export function endLetterLookalike(
+  lemma: string,
+  freq: ReadonlyMap<string, number>,
+): { word: string; ratio: number } | null {
+  const own = freq.get(lemma) ?? 0;
+  const neighbours = [
+    lemma.slice(0, -1),
+    ..."abcdefghijklmnopqrstuvwxyz".split("").map((c) => lemma + c),
+  ];
+  let best: { word: string; ratio: number } | null = null;
+  for (const word of neighbours) {
+    const f = freq.get(word);
+    if (f === undefined || own <= 0) continue;
+    const ratio = f / own;
+    if (ratio >= LOOKALIKE_RATIO && (!best || ratio > best.ratio)) best = { word, ratio };
+  }
+  return best;
+}
 
 /**
  * Why a ranked lemma cannot be a yes/no item, or null when it can. "Do you know this word?" is
  * invalid for a lemma the learner may recognize as a form of another word (found → find,
- * lives → live), for names and abbreviations, and for excluded words.
+ * lives → live) or as a much more frequent word one end-letter away (rout → route), for names and
+ * abbreviations, and for excluded words.
  */
 export function ineligible(row: LemmaRow, ctx: BankContext): string | null {
   if (!ctx.band.has(row.lemma)) return "no band";
@@ -32,6 +62,8 @@ export function ineligible(row: LemmaRow, ctx: BankContext): string | null {
   if (row.formOf.length > 0) return `also a form of ${row.formOf.join(", ")}`;
   if (row.proper && !ctx.listed.has(row.lemma)) return "proper noun";
   if (ctx.excluded.has(row.lemma)) return "excluded list";
+  const like = endLetterLookalike(row.lemma, ctx.freq);
+  if (like) return `one letter from "${like.word}" (${Math.floor(like.ratio)}x more frequent)`;
   return null;
 }
 

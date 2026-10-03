@@ -15,6 +15,7 @@ const row = (lemma: string, rank: number, over: Partial<LemmaRow> = {}): LemmaRo
 
 const ctx = (rows: LemmaRow[], over: Partial<BankContext> = {}): BankContext => ({
   band: new Map(rows.map((r) => [r.lemma, "B1" as Band])),
+  freq: new Map(rows.map((r) => [r.lemma, r.freq])),
   listed: new Set(["mark"]),
   excluded: new Set(["pizza"]),
   ...over,
@@ -80,5 +81,25 @@ describe("placement bank eligibility", () => {
     );
     expect(after).not.toContain(gone);
     expect(after.filter((l) => !before.includes(l))).toHaveLength(1);
+  });
+
+  it("skips a lemma one end-letter away from a lemma 10x more frequent (rout/route, sometime/sometimes)", () => {
+    const rows = [
+      row("route", 1, { freq: 100 }),
+      row("rout", 2, { freq: 5 }), // + e → route, 20x
+      row("sometimes", 3, { freq: 80 }),
+      row("sometime", 4, { freq: 4 }), // − s ← sometimes, 20x
+      row("ten", 5, { freq: 50 }), // + d → tend, rarer: stays
+      row("tend", 6, { freq: 10 }), // − d → ten, only 5x: stays
+      row("plan", 7, { freq: 30 }),
+      row("plane", 8, { freq: 3 }), // exactly 10x: excluded
+    ];
+    const c = ctx(rows);
+    expect(ineligible(rows[1]!, c)).toBe('one letter from "route" (20x more frequent)');
+    expect(ineligible(rows[3]!, c)).toBe('one letter from "sometimes" (20x more frequent)');
+    expect(ineligible(rows[4]!, c)).toBeNull();
+    expect(ineligible(rows[5]!, c)).toBeNull();
+    expect(ineligible(rows[7]!, c)).toBe('one letter from "plan" (10x more frequent)');
+    expect(ineligible(rows[0]!, c)).toBeNull();
   });
 });

@@ -180,10 +180,6 @@
     "text": "spoanance"
   },
   {
-    "id": "p-plaiproule",
-    "text": "plaiproule"
-  },
-  {
     "id": "p-braisture",
     "text": "braisture"
   },
@@ -192,11 +188,15 @@
     "text": "tinrondery"
   },
   {
-    "id": "p-premmoul",
-    "text": "premmoul"
-  },
-  {
     "id": "p-bleampent",
     "text": "bleampent"
+  },
+  {
+    "id": "p-laimpate",
+    "text": "laimpate"
+  },
+  {
+    "id": "p-fentastish",
+    "text": "fentastish"
   }
 ]

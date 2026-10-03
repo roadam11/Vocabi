@@ -255,11 +255,6 @@
     "band": "B2"
   },
   {
-    "id": "B2-nor",
-    "lemma": "nor",
-    "band": "B2"
-  },
-  {
     "id": "B2-occasion",
     "lemma": "occasion",
     "band": "B2"
@@ -277,6 +272,11 @@
   {
     "id": "B2-rare",
     "lemma": "rare",
+    "band": "B2"
+  },
+  {
+    "id": "B2-religious",
+    "lemma": "religious",
     "band": "B2"
   },
   {
@@ -332,6 +332,11 @@
   {
     "id": "B3-carefully",
     "lemma": "carefully",
+    "band": "B3"
+  },
+  {
+    "id": "B3-climb",
+    "lemma": "climb",
     "band": "B3"
   },
   {
@@ -400,11 +405,6 @@
     "band": "B3"
   },
   {
-    "id": "B3-provider",
-    "lemma": "provider",
-    "band": "B3"
-  },
-  {
     "id": "B3-rebel",
     "lemma": "rebel",
     "band": "B3"
@@ -448,11 +448,6 @@
     "id": "B3-yield",
     "lemma": "yield",
     "band": "B3"
-  },
-  {
-    "id": "B4-barn",
-    "lemma": "barn",
-    "band": "B4"
   },
   {
     "id": "B4-bride",
@@ -560,6 +555,11 @@
     "band": "B4"
   },
   {
+    "id": "B4-spike",
+    "lemma": "spike",
+    "band": "B4"
+  },
+  {
     "id": "B4-streak",
     "lemma": "streak",
     "band": "B4"
@@ -630,11 +630,6 @@
     "band": "B5"
   },
   {
-    "id": "B5-challenger",
-    "lemma": "challenger",
-    "band": "B5"
-  },
-  {
     "id": "B5-chord",
     "lemma": "chord",
     "band": "B5"
@@ -672,6 +667,16 @@
   {
     "id": "B5-cruiser",
     "lemma": "cruiser",
+    "band": "B5"
+  },
+  {
+    "id": "B5-duplicate",
+    "lemma": "duplicate",
+    "band": "B5"
+  },
+  {
+    "id": "B5-feasible",
+    "lemma": "feasible",
     "band": "B5"
   },
   {
@@ -717,11 +722,6 @@
   {
     "id": "B5-obesity",
     "lemma": "obesity",
-    "band": "B5"
-  },
-  {
-    "id": "B5-perk",
-    "lemma": "perk",
     "band": "B5"
   },
   {
@@ -772,6 +772,11 @@
   {
     "id": "ACAD-ecological",
     "lemma": "ecological",
+    "band": "ACAD"
+  },
+  {
+    "id": "ACAD-effectiveness",
+    "lemma": "effectiveness",
     "band": "ACAD"
   },
   {
@@ -867,11 +872,6 @@
   {
     "id": "ACAD-sniff",
     "lemma": "sniff",
-    "band": "ACAD"
-  },
-  {
-    "id": "ACAD-sometime",
-    "lemma": "sometime",
     "band": "ACAD"
   },
   {

@@ -30,7 +30,8 @@ const listed = new Set([
 ]);
 const excluded = new Set(["exclude-offensive.txt", "exclude-names.txt"].flatMap(list));
 
-const items = sampleBank(rows, { band, listed, excluded }, BANDS, PER_BAND, SEED);
+const freq = new Map(rows.map((r) => [r.lemma, r.freq]));
+const items = sampleBank(rows, { band, listed, excluded, freq }, BANDS, PER_BAND, SEED);
 writeFileSync(join(ROOT, "content/placement/items.json"), `${JSON.stringify(items, null, 2)}\n`);
 
 const rank = new Map(rows.map((r) => [r.lemma, r.rank]));
