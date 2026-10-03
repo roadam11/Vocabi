@@ -1,20 +1,37 @@
 /**
- * Builds content/reference/top20k-en.txt: the top 20,000 English words from wordfreq, used only by
- * `pnpm content:check` rule 9 (pseudowords; docs/DECISIONS.md #7). Never imported from src/.
+ * Builds content/reference/ — internal reference data, never imported from src/
+ * (docs/DECISIONS.md #28; sources and licenses in content/SOURCES.md):
+ * - top20k-en.txt: the top 20,000 English words from wordfreq, for `pnpm content:check` rules 9
+ *   and 12 (docs/DECISIONS.md #7).
+ * - The pinned NGSL 1.2, NAWL 1.2 and CEFR-J 1.5 files (sources.ts), byte-for-byte, sha256-checked.
+ * - lemmas-en.tsv: wordfreq forms aggregated to ranked lemmas (lemmas.ts), the input of the
+ *   placement bands (bands.ts, docs/DECISIONS.md #31). The dictionary and the proper-noun signals
+ *   come from WordNet 3.1, whose synset words keep their capitalization ("Paris" vs "john").
  *
  * Reproducible without Python: downloads the pinned wordfreq wheel from PyPI, verifies its sha256,
  * and decodes the bundled `large_en.msgpack.gz` ("cB" format: a header, then buckets of words by
- * descending frequency). Iterating buckets in order is exactly wordfreq's
- * `top_n_list("en", 20000)` (wordlist "best" = "large" for English, ascii_only=False).
+ * descending frequency; bucket i holds words of frequency 10^(−i/100)). Iterating buckets in order
+ * is exactly wordfreq's `top_n_list("en", n)` (wordlist "best" = "large" for English).
  *
  * Usage: pnpm content:build-reference   (network needed; the output is committed)
  */
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { decode } from "@msgpack/msgpack";
 import { unzipSync } from "fflate";
+import { formatLemmaRows, LEMMAS_HEADER, rankLemmas } from "./lemmas";
+import {
+  parseCefrj,
+  parseFamilies,
+  parseNgslStats,
+  type PinnedSource,
+  readSource,
+  REFERENCE_DIR,
+  SOURCES,
+} from "./sources";
 
 const WORDFREQ_VERSION = "3.1.1";
 const WHEEL_URL =
@@ -22,42 +39,163 @@ const WHEEL_URL =
 const WHEEL_SHA256 = "4b1c6ecffc6198be3396d5cf871c4423ca71c907c231348d352dd54d62b97473";
 const DATA_PATH = "wordfreq/data/large_en.msgpack.gz";
 const TOP_N = 20_000;
+/** Forms aggregated into lemmas: enough for > 8,000 ranked lemmas plus NAWL's rarer words. */
+const LEMMA_FORMS_N = 80_000;
 // Kept after taking the top N: plain lowercase words (apostrophes/hyphens allowed). Numbers,
 // symbols and non-ASCII tokens can never collide with an ASCII pseudoword anyway.
 const KEEP = /^[a-z][a-z'-]*$/;
 
-const OUT = resolve(import.meta.dirname, "../../content/reference/top20k-en.txt");
+/** WordNet 3.1 database (npm package wordnet-db; WordNet license, see content/SOURCES.md). */
+const WORDNET_URL = "https://registry.npmjs.org/wordnet-db/-/wordnet-db-3.1.14.tgz";
+const WORDNET_SHA256 = "9b93831ae01771d02f360c1ebf3fe415ed2426a31f2201cb0943025c7403e79a";
+const WORDNET_DATA = ["noun", "verb", "adj", "adv"].map((p) => `package/dict/data.${p}`);
+
+const sha256 = (b: Uint8Array) => createHash("sha256").update(b).digest("hex");
+
+async function download(url: string, expected: string): Promise<Uint8Array> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`download failed: ${res.status} ${url}`);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  const sha = sha256(bytes);
+  if (sha !== expected) throw new Error(`sha256 mismatch for ${url}: ${sha}`);
+  return bytes;
+}
+
+function write(file: string, content: string | Uint8Array) {
+  const path = join(REFERENCE_DIR, file);
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, content);
+}
 
 async function main() {
-  const res = await fetch(WHEEL_URL);
-  if (!res.ok) throw new Error(`download failed: ${res.status}`);
-  const wheel = new Uint8Array(await res.arrayBuffer());
-  const sha = createHash("sha256").update(wheel).digest("hex");
-  if (sha !== WHEEL_SHA256) throw new Error(`sha256 mismatch: ${sha}`);
-
+  // 1. wordfreq.
+  const wheel = await download(WHEEL_URL, WHEEL_SHA256);
   const file = unzipSync(wheel, { filter: (f) => f.name === DATA_PATH })[DATA_PATH];
   if (!file) throw new Error(`${DATA_PATH} not found in wheel`);
   const data = decode(gunzipSync(file)) as [{ format: string; version: number }, ...string[][]];
   const [header, ...buckets] = data;
   if (header.format !== "cB" || header.version !== 1) throw new Error("unexpected cBpack header");
 
-  const top: string[] = [];
-  outer: for (const bucket of buckets) {
-    for (const word of bucket) {
-      top.push(word);
-      if (top.length >= TOP_N) break outer;
+  const ordered: { form: string; freq: number }[] = [];
+  outer: for (const [i, bucket] of buckets.entries()) {
+    for (const form of bucket) {
+      ordered.push({ form, freq: 10 ** (-i / 100) });
+      if (ordered.length >= LEMMA_FORMS_N) break outer;
     }
   }
-  const words = [...new Set(top.map((w) => w.toLowerCase()).filter((w) => KEEP.test(w)))];
 
-  const headerLines = [
-    `# Top ${TOP_N} English words from wordfreq ${WORDFREQ_VERSION} (large_en), filtered to ${KEEP}.`,
-    `# Wheel sha256 ${WHEEL_SHA256}. Data license CC-BY-SA 4.0 — see content/SOURCES.md.`,
-    `# Generated by scripts/content/build-reference.ts. Internal validation only; never shipped.`,
-  ];
-  mkdirSync(dirname(OUT), { recursive: true });
-  writeFileSync(OUT, [...headerLines, ...words].join("\n") + "\n");
-  console.log(`wrote ${words.length} words (of top ${top.length}) to ${OUT}`);
+  const top = ordered.slice(0, TOP_N).map((f) => f.form);
+  const words = [...new Set(top.map((w) => w.toLowerCase()).filter((w) => KEEP.test(w)))];
+  write(
+    "top20k-en.txt",
+    [
+      `# Top ${TOP_N} English words from wordfreq ${WORDFREQ_VERSION} (large_en), filtered to ${KEEP}.`,
+      `# Wheel sha256 ${WHEEL_SHA256}. Data license CC-BY-SA 4.0 — see content/SOURCES.md.`,
+      `# Generated by scripts/content/build-reference.ts. Internal validation only; never shipped.`,
+      ...words,
+    ].join("\n") + "\n",
+  );
+  console.log(`top20k-en.txt: ${words.length} words (of top ${top.length})`);
+
+  // 2. Pinned word lists, byte-for-byte.
+  for (const s of Object.values(SOURCES) as PinnedSource[]) {
+    write(s.file, await download(s.url, s.sha256));
+    console.log(`${s.file}: sha256 ok`);
+  }
+
+  // 3. Lemma ranking.
+  const ngsl = parseFamilies(readSource(SOURCES.ngslFamilies));
+  const ngslRank = new Map(
+    parseNgslStats(readSource(SOURCES.ngslStats)).map((r) => [r.lemma, r.rank]),
+  );
+  ngsl.sort((a, b) => (ngslRank.get(a.lemma) ?? 1e9) - (ngslRank.get(b.lemma) ?? 1e9));
+  const nawl = parseFamilies(readSource(SOURCES.nawlFamilies));
+  const cefrj = parseCefrj(readSource(SOURCES.cefrj)).map((e) => e.headword);
+
+  const require = createRequire(import.meta.url);
+  const wink = require("wink-lemmatizer") as Record<
+    "verb" | "noun" | "adjective",
+    (w: string) => string
+  >;
+  const wn = await wordnetWords();
+
+  const listed = new Set([...ngsl.map((f) => f.lemma), ...nawl.map((f) => f.lemma), ...cefrj]);
+  const dictionary = new Set([...wn.lower, ...wn.capital, ...listed]);
+  const properOnly = new Set([...wn.capital].filter((w) => !wn.lower.has(w)));
+  const rows = rankLemmas({
+    forms: dedupeForms(ordered),
+    families: [...ngsl, ...nawl],
+    dictionary,
+    listed,
+    properOnly,
+    properUse: wn.capital,
+    lemmatize: (w) => [wink.verb(w), wink.noun(w), wink.adjective(w)].filter((c) => c !== w),
+  });
+  write(
+    "lemmas-en.tsv",
+    [
+      `# Lemmas ranked by summed wordfreq ${WORDFREQ_VERSION} frequency of their forms (top ${LEMMA_FORMS_N} forms).`,
+      `# Method: scripts/content/lemmas.ts; sources and licenses: content/SOURCES.md. Internal only.`,
+      LEMMAS_HEADER,
+      ...formatLemmaRows(rows),
+    ].join("\n") + "\n",
+  );
+  console.log(`lemmas-en.tsv: ${rows.length} lemmas`);
+}
+
+/**
+ * Single words of every WordNet 3.1 synset, lowercased, split by whether WordNet writes them
+ * lowercase ("john" = toilet) or capitalized ("Paris", "John"). Data lines: offset, lex file,
+ * type, word count (hex), then word/lex-id pairs; adjective markers like "(a)" are dropped.
+ */
+async function wordnetWords(): Promise<{ lower: Set<string>; capital: Set<string> }> {
+  const files = untar(gunzipSync(await download(WORDNET_URL, WORDNET_SHA256)));
+  const lower = new Set<string>();
+  const capital = new Set<string>();
+  for (const name of WORDNET_DATA) {
+    const text = new TextDecoder().decode(files.get(name));
+    for (const line of text.split("\n")) {
+      if (!line || line.startsWith("  ")) continue;
+      const f = line.split(" ");
+      const count = parseInt(f[3]!, 16);
+      for (let k = 0; k < count; k++) {
+        const word = f[4 + 2 * k]!.replace(/\(.*\)$/, "");
+        if (word.includes("_")) continue;
+        const l = word.toLowerCase();
+        (word === l ? lower : capital).add(l);
+      }
+    }
+  }
+  return { lower, capital };
+}
+
+/** Regular files of a (ustar) tar archive by path. */
+function untar(tar: Uint8Array): Map<string, Uint8Array> {
+  const out = new Map<string, Uint8Array>();
+  const str = (a: number, b: number) =>
+    new TextDecoder().decode(tar.subarray(a, b)).replace(/\0.*$/s, "");
+  for (let off = 0; off + 512 <= tar.length;) {
+    const name = str(off, off + 100);
+    if (!name) break;
+    const size = parseInt(str(off + 124, off + 136).trim() || "0", 8);
+    const prefix = str(off + 345, off + 500);
+    const type = str(off + 156, off + 157);
+    if (type === "0" || type === "") {
+      out.set(prefix ? `${prefix}/${name}` : name, tar.subarray(off + 512, off + 512 + size));
+    }
+    off += 512 + Math.ceil(size / 512) * 512;
+  }
+  return out;
+}
+
+/** Lowercased forms, first (most frequent) occurrence kept, frequencies of case variants summed. */
+function dedupeForms(ordered: readonly { form: string; freq: number }[]) {
+  const out = new Map<string, number>();
+  for (const { form, freq } of ordered) {
+    const f = form.toLowerCase();
+    out.set(f, (out.get(f) ?? 0) + freq);
+  }
+  return [...out].map(([form, freq]) => ({ form, freq }));
 }
 
 await main();

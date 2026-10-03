@@ -14,3 +14,6 @@ coverage/
 .DS_Store
 *.log
 .vercel
+
+# Uploaded originals (e.g. Noa's docx with her Hebrew translations) — never committed.
+review/input/
