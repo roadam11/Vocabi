@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { Sense } from "../../src/content/schema";
+import { readBandInputs } from "./bands";
 import { type Fixture, failing, passing } from "./fixtures";
 import { ERROR_CODES, formatDiagnostic, lemmaSlug, runCheck, WARNING_CODES } from "./validate";
 
@@ -18,7 +19,7 @@ function check(fixture: Fixture) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), typeof value === "string" ? value : JSON.stringify(value));
   }
-  return runCheck(root, { reference: fixture.reference ?? reference });
+  return runCheck(root, { reference: fixture.reference ?? reference, bands: fixture.bands });
 }
 
 describe("content:check failing fixtures: the named rule fires, and nothing else", () => {
@@ -52,7 +53,9 @@ describe("content:check passing fixtures", () => {
   });
 
   it("the repo's content/ (20 devOnly senses) is clean: no errors, no warnings", () => {
-    expect(runCheck(CONTENT, { reference })).toEqual([]);
+    expect(
+      runCheck(CONTENT, { reference, bands: readBandInputs(join(CONTENT, "reference")) }),
+    ).toEqual([]);
   });
 });
 

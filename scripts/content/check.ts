@@ -8,6 +8,7 @@
 import { readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { readBandInputs } from "./bands";
 import { formatDiagnostic, runCheck } from "./validate";
 
 const { values } = parseArgs({
@@ -23,7 +24,10 @@ function readReference(path: string): string[] {
     .filter((l) => l && !l.startsWith("#"));
 }
 
-const diagnostics = runCheck(root, { reference: readReference(referencePath) });
+const diagnostics = runCheck(root, {
+  reference: readReference(referencePath),
+  bands: readBandInputs(join(root, "reference")),
+});
 const errors = diagnostics.filter((d) => d.severity === "error");
 const warnings = diagnostics.filter((d) => d.severity === "warning");
 const rel = relative(process.cwd(), root);

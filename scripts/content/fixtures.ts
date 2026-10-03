@@ -3,6 +3,7 @@
  * one defect, plus passing edge cases. validate.test.ts writes each tree to a temp dir and runs the
  * real reader + validator on it. Keys of `files` are paths relative to the content root.
  */
+import type { BandInputs } from "./bands";
 import type { RuleCode } from "./validate";
 
 type Json = Record<string, unknown>;
@@ -11,6 +12,8 @@ export type Fixture = {
   files: Record<string, unknown>;
   /** Overrides the real top-20k list. */
   reference?: string[];
+  /** Band inputs (rules 13-14); omitted, those rules are skipped. */
+  bands?: BandInputs;
 };
 export type FailingFixture = Fixture & { code: RuleCode };
 
@@ -81,6 +84,15 @@ const lexiconEntry = (over: Json = {}): Json => ({
 });
 
 const one = (s: Json) => ({ "senses/a.json": [s] });
+
+/** 8000 ranked lemmas w1..w8000 and one NAWL lemma (w4000 → ACAD). */
+function tinyBands(): BandInputs {
+  return {
+    ranks: new Map(Array.from({ length: 8000 }, (_, i) => [`w${i + 1}`, i + 1])),
+    nawl: ["w4000"],
+  };
+}
+const TINY_SIZES = { B1: 1000, B2: 1000, B3: 1000, B4: 1999, B5: 3000, ACAD: 1 };
 
 export const failing: FailingFixture[] = [
   // Rule 1
@@ -411,6 +423,37 @@ export const failing: FailingFixture[] = [
     code: "NEAR_WORDS_STALE",
     files: one(sense({ nearWords: ["achieve"] })),
   },
+  // Rules 13-14
+  {
+    name: "bands.json missing",
+    code: "BANDS_STALE",
+    files: {},
+    bands: tinyBands(),
+  },
+  {
+    name: "bands.json sizes differ from the partition",
+    code: "BANDS_STALE",
+    files: { "placement/bands.json": { ...TINY_SIZES, B1: 999 } },
+    bands: tinyBands(),
+  },
+  {
+    name: "placement item in the wrong band",
+    code: "PLACEMENT_BAND",
+    files: {
+      "placement/bands.json": TINY_SIZES,
+      "placement/items.json": [{ id: "B2-w1", lemma: "w1", band: "B2" }],
+    },
+    bands: tinyBands(),
+  },
+  {
+    name: "placement item whose lemma is in no band",
+    code: "PLACEMENT_BAND",
+    files: {
+      "placement/bands.json": TINY_SIZES,
+      "placement/items.json": [{ id: "B5-zz", lemma: "zz", band: "B5" }],
+    },
+    bands: tinyBands(),
+  },
   // Warnings
   {
     name: "two senses in one track share a gloss",
@@ -442,6 +485,17 @@ export const failing: FailingFixture[] = [
 ];
 
 export const passing: Fixture[] = [
+  {
+    name: "bands.json up to date, items in their bands (ACAD out of B4)",
+    files: {
+      "placement/bands.json": TINY_SIZES,
+      "placement/items.json": [
+        { id: "B1-w1", lemma: "w1", band: "B1" },
+        { id: "ACAD-w4000", lemma: "w4000", band: "ACAD" },
+      ],
+    },
+    bands: tinyBands(),
+  },
   {
     name: "Latin in parentheses not touching Hebrew",
     files: one(sense(withExample({ he: "הצוות נאלץ לנטוש את הספינה (ship) בלילה." }))),

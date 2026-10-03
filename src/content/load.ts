@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import type { z } from "zod";
 import { type ContentKind, readContent } from "./read";
-import { LexiconEntry, PlacementItem, Pseudoword, Sense, Track } from "./schema";
+import { LexiconEntry, PlacementBands, PlacementItem, Pseudoword, Sense, Track } from "./schema";
 
 export type LoadOptions = {
   /** Content root; defaults to `<cwd>/content`. */
@@ -17,6 +17,8 @@ export type LoadedContent = {
   pseudowords: Pseudoword[];
   /** Track order restricted to the senses that actually loaded. */
   tracks: Track[];
+  /** Placement band sizes in lemmas (docs/DECISIONS.md #31); null until the file exists. */
+  bands: PlacementBands | null;
 };
 
 type Gated = { verification: { status: string }; devOnly?: boolean };
@@ -37,6 +39,7 @@ const SCHEMAS = {
   placementItem: PlacementItem,
   pseudoword: Pseudoword,
   track: Track,
+  bands: PlacementBands,
 } satisfies Record<ContentKind, z.ZodType>;
 
 /**
@@ -73,5 +76,6 @@ export function loadContent(opts: LoadOptions = {}): LoadedContent {
     placementItems: parsed("placementItem"),
     pseudowords: parsed("pseudoword"),
     tracks: parsed("track").map((t) => ({ ...t, order: t.order.filter((id) => ids.has(id)) })),
+    bands: parsed("bands")[0] ?? null,
   };
 }

@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /** What a content file holds; each kind has its own schema in ./schema.ts. */
-export type ContentKind = "sense" | "lexicon" | "placementItem" | "pseudoword" | "track";
+export type ContentKind = "sense" | "lexicon" | "placementItem" | "pseudoword" | "track" | "bands";
 
 export type RawRecord = { kind: ContentKind; file: string; index: number; value: unknown };
 export type FileError = { file: string; message: string };
@@ -16,6 +16,7 @@ const SOURCES: { kind: ContentKind; dir: string; file?: string; single?: boolean
   { kind: "placementItem", dir: "placement", file: "items.json" },
   { kind: "pseudoword", dir: "placement", file: "pseudo.json" },
   { kind: "track", dir: "tracks", single: true },
+  { kind: "bands", dir: "placement", file: "bands.json", single: true },
 ];
 
 function jsonFiles(root: string, dir: string, file?: string): string[] {

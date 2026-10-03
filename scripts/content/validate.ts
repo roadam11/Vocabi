@@ -12,12 +12,14 @@ import {
 import { readContent, type RawContent, type RawRecord } from "../../src/content/read";
 import {
   LexiconEntry,
+  PlacementBands,
   PlacementItem,
   Pseudoword,
   Sense,
   SHIPPING_TRACK,
   Track,
 } from "../../src/content/schema";
+import { type BandInputs, computeBands } from "./bands";
 import { inflections } from "./inflect";
 import { computeNearWords, referenceForms } from "./near";
 
@@ -43,6 +45,8 @@ export const ERROR_CODES = [
   "LENGTH_EXAMPLE_EN",
   "RECOGNITION_DISTRACTORS",
   "NEAR_WORDS_STALE",
+  "BANDS_STALE",
+  "PLACEMENT_BAND",
 ] as const;
 export const WARNING_CODES = ["W_GLOSS_COLLISION", "W_CLOZE_INFLECTION"] as const;
 export type RuleCode = (typeof ERROR_CODES)[number] | (typeof WARNING_CODES)[number];
@@ -117,9 +121,17 @@ type Parsed<T> = { file: string; index: number; value: T };
 export type CheckOptions = {
   /** Top ~20k English words (content/reference/top20k-en.txt), for rules 9 and 12. */
   reference: readonly string[];
+  /**
+   * Lemma ranks + NAWL headwords (content/reference/), for rules 13-14. Omitted (test fixtures
+   * that are not about bands), both rules are skipped.
+   */
+  bands?: BandInputs;
 };
 
-export function validateContent(raw: RawContent, { reference }: CheckOptions): Diagnostic[] {
+export function validateContent(
+  raw: RawContent,
+  { reference, bands: bandInputs }: CheckOptions,
+): Diagnostic[] {
   const out: Diagnostic[] = [];
   const error = (file: string, id: string, code: RuleCode, message: string) =>
     out.push({ severity: "error", file, id, code, message });
@@ -134,12 +146,14 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
   const items: Parsed<PlacementItem>[] = [];
   const pseudos: Parsed<Pseudoword>[] = [];
   const tracks: Parsed<Track>[] = [];
+  const bandFiles: Parsed<PlacementBands>[] = [];
   const schemas = {
     sense: Sense,
     lexicon: LexiconEntry,
     placementItem: PlacementItem,
     pseudoword: Pseudoword,
     track: Track,
+    bands: PlacementBands,
   };
   const buckets = {
     sense: senses,
@@ -147,6 +161,7 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
     placementItem: items,
     pseudoword: pseudos,
     track: tracks,
+    bands: bandFiles,
   };
   for (const r of raw.records) {
     const result = schemas[r.kind].safeParse(r.value);
@@ -506,6 +521,34 @@ export function validateContent(raw: RawContent, { reference }: CheckOptions): D
         }
       }
     });
+  }
+
+  // Rules 13-14: bands.json and the placement items match the lemma partition (DECISIONS #31).
+  if (bandInputs) {
+    const { band, sizes } = computeBands(bandInputs);
+    const stored = bandFiles[0]?.value;
+    const hasFile = raw.records.some((r) => r.kind === "bands");
+    if (!hasFile) {
+      error("placement/bands.json", "-", "BANDS_STALE", "missing; run pnpm content:bands");
+    } else if (stored && JSON.stringify(stored) !== JSON.stringify(sizes)) {
+      error(
+        "placement/bands.json",
+        "-",
+        "BANDS_STALE",
+        `is ${JSON.stringify(stored)}, expected ${JSON.stringify(sizes)}; run pnpm content:bands`,
+      );
+    }
+    for (const { file, value: p } of items) {
+      const b = band.get(normalizeEn(p.lemma));
+      if (b !== p.band) {
+        error(
+          file,
+          p.id,
+          "PLACEMENT_BAND",
+          b ? `"${p.lemma}" is in ${b}, not ${p.band}` : `"${p.lemma}" is in no band`,
+        );
+      }
+    }
   }
 
   return out;
