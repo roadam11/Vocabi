@@ -1,0 +1,576 @@
+# Noa headwords not in NAWL ∪ CEFR-J B2 (561 of 849); they stay candidates via Noa's list.
+abbreviated
+abduct
+abduction
+abide
+abrasion
+abrasive
+abstained	(abstain)
+abstract
+acclaim
+accolade
+accomplice
+accomplish
+accord
+accorded	(accord)
+accustom
+adept
+adhesive
+adjourns	(adjourn)
+admonish
+adversary
+advocate
+affiliation
+affinity
+afflict
+ajar
+alight
+allusion
+alteration
+alumni	(alumnus)
+amateur
+amen
+amend
+amiably
+amicable
+apparatus
+appendage
+apprehension
+apt
+aptitude
+arable
+arise
+aristocrat
+ascend
+ashore
+asset
+assimilated	(assimilate)
+assimilation
+assuage
+astound
+attire
+audacious
+augment
+aversion
+avert
+bandage
+banish
+barber
+bemoaning	(bemoan)
+bequeath
+blissful
+blow
+blunder
+blunt
+boast
+bolster
+bulky
+burrows	(burrow)
+candid
+chiefly
+chronicle
+clasp
+clenched
+clogged
+coal
+coax
+coddle
+commissioner
+compass
+compel
+comprehend
+comprise
+concur
+condensation
+condense
+confer
+confide
+confidentially
+confiscate
+conformity
+constitute
+contest
+continuous
+convent
+convey
+counteract
+counterpart
+courteous
+crane
+creed
+crescent
+crudely
+cultivate
+cultivation
+cunning
+curator
+dart
+daunting
+decimation
+declaration
+declare
+deduct
+defer
+defiance
+deflate
+dejected
+deliberation
+delve
+demise
+demonstrate
+denounce
+deplete
+deprivation
+deprive
+desert
+detain
+deter
+detour
+detrimental
+devise
+dexterity
+diction
+diminish
+disband
+discard
+discern
+disdain
+dispatch
+dispose
+dissemination
+dissent
+dissenter
+distinct
+distinction
+distort
+distorted
+distress
+distressingly
+district
+docile
+doomed
+doorsteps	(doorstep)
+dormant
+drab
+draw
+draw upon
+drawn	(draw)
+dwelling
+eccentric
+economize
+edict
+elude
+elusive
+embellish
+emblematic
+emerge
+eminent
+enchant
+enclose
+encompass
+encroach
+endemic
+enrage
+enroll in
+ensue
+enthralled
+enthusiast
+enumerate
+epitome
+epoch
+eradicating	(eradicate)
+erosion
+escalate
+excavate
+exert
+exhibition
+extent
+exuberant
+fad
+falsify
+fanciful
+fare
+fasten
+feasible
+fee
+feign
+feigned
+felines	(feline)
+ferry
+feud
+fiction
+firmly
+fist
+flayed	(flay)
+fling
+flood
+flourished	(flourish)
+fluctuate
+flung	(fling)
+foal
+form
+formulate
+fortified
+fragment
+frank
+frivolous
+fruitless
+fugitives	(fugitive)
+gall
+garment
+gauze
+generate
+glide
+gloat
+gloom
+gnarled
+grace
+gracious
+graciously
+grant
+gratify
+grave
+grind
+groin
+grudge
+hallmarks	(hallmark)
+halt
+hampered	(hamper)
+harbinger
+hasty
+havoc
+haze
+hectic
+heed
+heir
+hence
+herald
+herd
+hereditary
+heresy
+heretical
+hinder
+hive
+homely
+horn
+hub
+humid
+humidity
+hurdle
+hypothesize
+ignite
+ill-fated
+illiteracy
+illiterate
+imbue
+imburse
+impair
+impartially
+impenetrable
+implausible
+implore
+impute
+in vain
+incite
+inconspicuous
+incorporate
+indignant
+indulgence
+inept
+infidelity
+infiltrate
+inflict
+influx
+inherent
+inimitable
+inquiry
+insight
+inspection
+insulation
+intensify
+intercede
+intercept
+interject
+intertwined	(intertwine)
+intricacy
+intrigue
+invaluable
+inversely
+irrevocably
+jagged
+jubilant
+junction
+kilt
+kindle
+labor
+lament
+landmark
+landscape
+largely
+lavishly
+lenient
+lent	(lend)
+liability
+life span
+limber
+limp
+literate
+livelihood
+livid
+lodge
+longevity
+loom
+luminous
+luring	(lure)
+malicious
+marsh
+martyrs	(martyr)
+meek
+menace
+merely
+merit
+meticulous
+mitigate
+moderate
+moderation
+modify
+modulation
+moratorium
+mundane
+narration
+nasal
+nocturnal
+nuptial
+oblique
+obliterate
+oblivious
+oblong
+obscene
+obsolete
+obstinate
+obstruct
+obtuse
+omit
+ommision
+omniscient
+opaque
+opulent
+orchard
+ordain
+ordeal
+overdo
+overrule
+pace
+padding
+parallel
+parasite
+pauper
+peculiar
+pen
+penitence
+perish
+perpetrate
+perpetuate
+perplexing
+persecution
+persuade
+persuasively
+pervade
+petition
+pillars	(pillar)
+pious
+pipe
+pit
+placid
+plea
+pleas	(plea)
+pledge
+pledged
+plentiful
+plow
+poaching
+porous
+possession
+potter
+pottery
+pounced	(pounce)
+precarious
+predominate
+proceed
+procession
+procrastination
+procure
+proficient
+profoundly
+proliferate
+prolific
+prolonged
+prone
+prophecy
+prophet
+proscribe
+prosperous
+protrude
+put forth
+radiant
+ragged
+raid
+ramification
+ratified
+reap
+reassurance
+recall
+receptive
+recite
+recline
+reconciled
+recuperate
+redeem
+refer
+reflect
+reflection
+regal
+regenerate
+reimburse
+rein
+reiterate
+rekindle
+relapse
+reliance
+reminiscent
+remotest	(remote)
+replenish
+repressive
+reprimand
+resent
+resolve
+restore
+restraint
+resurgence
+retaliate
+retarded
+retort
+retract
+revert
+revise
+revision
+revolted	(revolt)
+rift
+rigid
+rigorous
+ripe
+rivalry
+rod
+salvage
+scantest	(scant)
+scenic
+scold
+scope
+scorch
+scrutinize
+secluded
+seize
+senesce
+sheet
+shrill
+sincerely
+slain
+slander
+slant
+slay
+slop
+slump
+smuggle
+spectator
+splendid
+stale
+stem from
+sting
+stumble
+subjugate
+submerge
+subordinate
+subterranean
+successor
+summit
+summon
+superficial
+superfluous
+supplant
+surcharge
+surmount
+surpass
+swamp
+take off
+tangible
+tarnish
+taut
+teem
+teeming
+tenet
+tentatively
+terminate
+terrain
+thaw
+thrust
+tidy
+timid
+toad
+torment
+transcend
+transgress
+transpired	(transpire)
+treason
+tribute
+trigger
+trills	(trill)
+truancy
+undergo
+undergoing	(undergo)
+underline
+underwent	(undergo)
+unfathomable
+unhindered
+unhinged
+unprecedented
+unscrupulous
+upheaval
+upheavals	(upheaval)
+vanquish
+vendor
+venom
+veracity
+vicinity
+vigilance
+virtuous
+viscera
+vivacious
+vivid
+volatile
+volumes	(volume)
+wanderlust
+wane
+ward
+wave
+well read
+wholesome
+windmill
+wither
+wrath
+wrestle
+wrung	(wring)
+yarn
+
+# Noa headwords excluded from the candidate pool (12):
+accord	NGSL top 1000
+accorded	NGSL top 1000
+conference	NGSL top 1000
+draw	NGSL top 1000
+drawn	NGSL top 1000
+form	NGSL top 1000
+imburse	no usable POS (prefix, determiner, pronoun, unknown)
+mine	NGSL top 1000
+ommision	no usable POS (prefix, determiner, pronoun, unknown)
+refer	NGSL top 1000
+reference	NGSL top 1000
+reflect	NGSL top 1000

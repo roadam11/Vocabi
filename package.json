@@ -23,7 +23,8 @@
     "content:bands": "tsx scripts/content/build-bands.ts",
     "content:placement": "tsx scripts/content/build-placement.ts",
     "content:pseudowords": "tsx scripts/content/build-pseudowords.ts",
-    "content:noa": "tsx scripts/content/extract-noa.ts"
+    "content:noa": "tsx scripts/content/extract-noa.ts",
+    "content:starter": "tsx scripts/content/build-starter.ts"
   },
   "dependencies": {
     "next": "^16.3.8",
