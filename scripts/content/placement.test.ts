@@ -121,4 +121,24 @@ describe("placement bank eligibility", () => {
       expect(why(ok)).toBeNull();
     }
   });
+
+  it("is stable under band changes: a lemma joining, leaving or changing rank moves no other slot", () => {
+    const letters = "abcdefghijklmnopqrstuvwxy";
+    const rows = Array.from({ length: 50 }, (_, i) =>
+      row(`word${letters[i % 25]}${letters[Math.floor(i / 25)]}`, i + 1),
+    );
+    const sample = (rs: LemmaRow[]) => sampleBank(rs, ctx(rs), ["B1"], 10, 7).map((i) => i.lemma);
+    const before = sample(rows);
+    // One lemma leaves the band (not a sampled one), ranks of the rest shift by one.
+    const leaving = rows.find((r) => !before.includes(r.lemma))!;
+    const after = sample(
+      rows
+        .filter((r) => r !== leaving)
+        .map((r) => ({ ...r, rank: r.rank > leaving.rank ? r.rank - 1 : r.rank })),
+    );
+    expect(after).toEqual(before);
+    // One new lemma joins: at most one slot changes, and only to that lemma.
+    const joined = sample([...rows, row("newcomer", 51)]);
+    expect(joined.filter((l) => !before.includes(l)).every((l) => l === "newcomer")).toBe(true);
+  });
 });

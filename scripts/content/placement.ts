@@ -5,7 +5,6 @@
  */
 import type { PlacementItem } from "../../src/content/schema";
 import type { Band } from "../../src/engine/distractors";
-import { mulberry32, shuffle } from "../../src/engine/random";
 import type { LemmaRow } from "./lemmas";
 import { lemmaSlug } from "./validate";
 
@@ -66,7 +65,14 @@ export function ineligible(row: LemmaRow, ctx: BankContext): string | null {
   return null;
 }
 
-/** `perBand` eligible lemmas per band: the first eligible ones of a seeded shuffle of the band. */
+/** Seeded 32-bit FNV-1a hash of (seed, band, lemma): a uniform random order keyed by the lemma. */
+export function sampleKey(seed: number, band: Band, lemma: string): number {
+  let h = 0x811c9dc5;
+  for (const ch of `${seed}:${band}:${lemma}`) h = Math.imul(h ^ ch.charCodeAt(0), 0x01000193);
+  return h >>> 0;
+}
+
+/** `perBand` eligible lemmas per band: the lowest seeded hash keys (sampleKey). */
 export function sampleBank(
   rows: readonly LemmaRow[],
   ctx: BankContext,
@@ -74,13 +80,14 @@ export function sampleBank(
   perBand: number,
   seed: number,
 ): PlacementItem[] {
-  return bands.flatMap((b, i) => {
-    // Shuffle the whole band, then take the first eligible lemmas: excluding one more word
-    // replaces only that word instead of reshuffling the band (docs/DECISIONS.md #59).
-    const band = rows.filter((r) => ctx.band.get(r.lemma) === b).sort((x, y) => x.rank - y.rank);
-    const picked = shuffle(band, mulberry32(seed + i))
-      .filter((r) => ineligible(r, ctx) === null)
-      .map((r) => r.lemma);
+  return bands.flatMap((b) => {
+    // Order the band by a seeded hash of each lemma, then take the first eligible ones: a lemma's
+    // place depends only on itself, so excluding a word, or a lemma joining, leaving or changing
+    // rank, moves no other slot (docs/DECISIONS.md #59, #62).
+    const picked = rows
+      .filter((r) => ctx.band.get(r.lemma) === b && ineligible(r, ctx) === null)
+      .map((r) => r.lemma)
+      .sort((x, y) => sampleKey(seed, b, x) - sampleKey(seed, b, y) || (x < y ? -1 : 1));
     if (picked.length < perBand) throw new Error(`${b}: only ${picked.length} eligible lemmas`);
     return picked
       .slice(0, perBand)
