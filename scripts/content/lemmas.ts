@@ -7,13 +7,13 @@
  * 1. NGSL 1.2 / NAWL 1.2 lemma families (authoritative for common words; they already fold
  *    British spellings and irregular forms: colour → color, felt → feel). Headwords map to
  *    themselves; a form listed in several families goes to the first (NGSL by rank, then NAWL).
- * 2. A dictionary base word (WordNet via wink-lexicon, NGSL, NAWL, CEFR-J) is its own lemma.
+ * 2. A dictionary base word (WordNet 3.1, NGSL, NAWL, CEFR-J) is its own lemma.
  * 3. Otherwise the WordNet "morphy" lemmatizer (verb, then noun, then adjective); the first
  *    candidate that is a dictionary word wins. Nothing found → not a word (dropped).
  * 4. A British base spelling folds to its American variant when that variant is a dictionary
  *    word and more frequent in wordfreq (organisation → organization), never for the exceptions.
- * Only lemmas on a source list, or WordNet words with a sense outside the proper-noun-like
- * lexicographer files (person/location/group), are ranked — that drops "london", "israel".
+ * Only lemmas on a source list, or dictionary words that WordNet does not write only capitalized,
+ * are ranked — that drops "london", "israel" (proper nouns).
  */
 
 export type LemmaInputs = {
@@ -25,7 +25,7 @@ export type LemmaInputs = {
   dictionary: ReadonlySet<string>;
   /** Headwords of NGSL, NAWL and CEFR-J: always rankable. */
   listed: ReadonlySet<string>;
-  /** WordNet words whose only senses are person/location/group nouns (likely proper nouns). */
+  /** Words WordNet writes only capitalized (proper nouns: London, Paris). */
   properOnly: ReadonlySet<string>;
   /** WordNet words that also have a capitalized (proper-noun) entry: "john", "mark". */
   properUse: ReadonlySet<string>;

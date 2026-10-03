@@ -1,0 +1,18 @@
+# Names, proper adjectives and abbreviations that WordNet does not flag; never placement items.
+# Curated for VOCABI (internal; to be confirmed by Roie).
+bobby
+carol
+christian
+chuck
+corp
+fella
+freeman
+gen
+hank
+khan
+malik
+potter
+rev
+smith
+victor
+wont

@@ -44,9 +44,9 @@ WordNet "morphy" lemmatization of forms outside the NGSL/NAWL families, and the 
 
 ## Derived reference files
 - `lemmas-en.tsv` (`lemma, rank, freq, forms, formOf, proper`): 28,582 lemmas from the top 80,000 wordfreq forms. Method in `docs/DECISIONS.md` #51 and `scripts/content/lemmas.ts`: NGSL/NAWL families first, then dictionary base words, then morphy; British spellings fold to a more frequent American dictionary variant; contraction pieces are dropped; WordNet-only-capitalized words (proper nouns) are dropped unless listed; ranks by summed frequency, ties alphabetical.
-- `exclude-offensive.txt`, `exclude-he-loanwords.txt`: curated by VOCABI for the placement bank (`docs/DECISIONS.md` #53); reviewed by Roie.
+- `exclude-offensive.txt`, `exclude-he-loanwords.txt`, `exclude-names.txt`: curated by VOCABI for the placement bank (`docs/DECISIONS.md` #53); to be confirmed by Roie.
 
 ## Noa's word list (private contribution)
-- **File:** `candidates/noa.txt` — 849 unique English headwords (910 headword lines, 56 duplicates removed: 50 literal repeats + 4 after normalization). Extracted 2026-10-03 by `pnpm content:noa` from `review/input/noa.docx` (git-ignored).
+- **File:** `candidates/noa.txt` — 849 unique English headwords (910 headword lines, 56 duplicate lines removed: 54 headwords appear more than once, 4 of them only after normalization: numbering, case, a trailing annotation). Extracted 2026-10-03 by `pnpm content:noa` from `review/input/noa.docx` (git-ignored).
 - **Permission:** confirmed by Roie (2026-10-03) for use as a VOCABI candidate list.
 - **Scope:** English headwords ONLY. Her Hebrew translations are never extracted, stored or used. 11 annotated spellings are listed in `review/noa-typos.csv` (2 applied, 4 kept, 5 pending review).

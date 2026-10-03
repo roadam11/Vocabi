@@ -1,5 +1,5 @@
 # Words never used as placement items: profanity, slurs, sexual and drug terms.
-# Curated for VOCABI (internal; reviewed by Roie). One lowercase lemma per line.
+# Curated for VOCABI (internal; to be confirmed by Roie). One lowercase lemma per line.
 anal
 anus
 arse
@@ -20,6 +20,7 @@ cunt
 damn
 dick
 dildo
+dope
 dyke
 erection
 fag
@@ -34,6 +35,7 @@ horny
 intercourse
 jerk
 masturbate
+meth
 nazi
 nigga
 nigger
@@ -41,9 +43,11 @@ nude
 orgasm
 penis
 piss
+poop
 porn
 porno
 prostitute
+prostitution
 pussy
 queer
 rape

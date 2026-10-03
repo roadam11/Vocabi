@@ -52,11 +52,16 @@ describe("content:check passing fixtures", () => {
     expect([...first("example.en of exactly 120").example.en].length).toBe(120);
   });
 
-  it("the repo's content/ (20 devOnly senses) is clean: no errors, no warnings", () => {
-    expect(
-      runCheck(CONTENT, { reference, bands: readBandInputs(join(CONTENT, "reference")) }),
-    ).toEqual([]);
-  });
+  // Rule 9 over the real 50 pseudowords (each against ~60k reference forms) takes a few seconds.
+  it(
+    "the repo's content/ (20 devOnly senses, real placement bank) is clean",
+    { timeout: 30_000 },
+    () => {
+      expect(
+        runCheck(CONTENT, { reference, bands: readBandInputs(join(CONTENT, "reference")) }),
+      ).toEqual([]);
+    },
+  );
 });
 
 describe("content:check output", () => {

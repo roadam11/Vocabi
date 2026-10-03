@@ -1,5 +1,5 @@
-# Noa headwords not in NAWL ∪ CEFR-J B2 (561 of 849); they stay candidates via Noa's list.
-abbreviated
+# Noa headwords not in NAWL ∪ CEFR-J B2 (556 of 849); they stay candidates via Noa's list.
+abbreviated	(abbreviate)
 abduct
 abduction
 abide
@@ -70,8 +70,7 @@ candid
 chiefly
 chronicle
 clasp
-clenched
-clogged
+clenched	(clench)
 coal
 coax
 coddle
@@ -143,19 +142,18 @@ dissenter
 distinct
 distinction
 distort
-distorted
+distorted	(distort)
 distress
 distressingly
 district
 docile
-doomed
 doorsteps	(doorstep)
 dormant
 drab
 draw
 draw upon
 drawn	(draw)
-dwelling
+dwelling	(dwell)
 eccentric
 economize
 edict
@@ -194,7 +192,7 @@ fasten
 feasible
 fee
 feign
-feigned
+feigned	(feign)
 felines	(feline)
 ferry
 feud
@@ -210,7 +208,7 @@ flung	(fling)
 foal
 form
 formulate
-fortified
+fortified	(fortify)
 fragment
 frank
 frivolous
@@ -249,7 +247,7 @@ herd
 hereditary
 heresy
 heretical
-hinder
+hinder	(hind)
 hive
 homely
 horn
@@ -297,7 +295,7 @@ intrigue
 invaluable
 inversely
 irrevocably
-jagged
+jagged	(jag)
 jubilant
 junction
 kilt
@@ -361,7 +359,6 @@ ordeal
 overdo
 overrule
 pace
-padding
 parallel
 parasite
 pauper
@@ -385,10 +382,10 @@ placid
 plea
 pleas	(plea)
 pledge
-pledged
+pledged	(pledge)
 plentiful
 plow
-poaching
+poaching	(poach)
 porous
 possession
 potter
@@ -404,7 +401,7 @@ proficient
 profoundly
 proliferate
 prolific
-prolonged
+prolonged	(prolong)
 prone
 prophecy
 prophet
@@ -413,17 +410,16 @@ prosperous
 protrude
 put forth
 radiant
-ragged
 raid
 ramification
-ratified
+ratified	(ratify)
 reap
 reassurance
 recall
 receptive
 recite
 recline
-reconciled
+reconciled	(reconcile)
 recuperate
 redeem
 refer
@@ -448,7 +444,6 @@ restore
 restraint
 resurgence
 retaliate
-retarded
 retort
 retract
 revert
@@ -474,7 +469,7 @@ senesce
 sheet
 shrill
 sincerely
-slain
+slain	(slay)
 slander
 slant
 slay

@@ -45,6 +45,34 @@ export function selectStarter(candidates: readonly Candidate[], target: number):
   return out;
 }
 
+/**
+ * A Noa headword as a lemma: a ranked word that is also a form of another lemma (distorted →
+ * distort, slain → slay) maps to that lemma, unless a source list has it as a headword itself
+ * (NAWL "bound" stays "bound").
+ */
+export function noaLemma(
+  word: string,
+  formOf: readonly string[] | undefined,
+  listed: ReadonlySet<string>,
+): string {
+  return formOf && formOf.length > 0 && !listed.has(word) ? formOf[0]! : word;
+}
+
+/**
+ * A phrase is as rare as its rarest word ("in vain" ranks with "vain", never with "in"), and
+ * takes that word's band; an unranked word makes the whole phrase unranked (frequency 0, B5).
+ */
+export function phraseStats(words: readonly { freq: number; band: string | undefined }[]): {
+  freq: number;
+  band: string;
+} {
+  const rarest = words.reduce((a, b) => (b.freq < a.freq ? b : a));
+  return { freq: rarest.freq, band: rarest.freq > 0 ? (rarest.band ?? "B5") : "B5" };
+}
+
+/** Spreadsheet error values that leaked into a source column ("#NAME?"): no hint at all. */
+export const cleanHint = (def: string) => (/^#[A-Z/0!?]+$/.test(def.trim()) ? "" : def.trim());
+
 export const STARTER_HEADER = "lemma,pos,sense_hint,band,rank,sources";
 
 export function starterCsv(rows: readonly Selected[]): string {

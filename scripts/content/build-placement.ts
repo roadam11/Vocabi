@@ -28,7 +28,9 @@ const listed = new Set([
   ...parseFamilies(readSource(SOURCES.nawlFamilies)).map((f) => f.lemma),
   ...parseCefrj(readSource(SOURCES.cefrj)).map((e) => e.headword),
 ]);
-const excluded = new Set([...list("exclude-offensive.txt"), ...list("exclude-he-loanwords.txt")]);
+const excluded = new Set(
+  ["exclude-offensive.txt", "exclude-he-loanwords.txt", "exclude-names.txt"].flatMap(list),
+);
 
 const items = sampleBank(rows, { band, listed, excluded }, BANDS, PER_BAND, SEED);
 writeFileSync(join(ROOT, "content/placement/items.json"), `${JSON.stringify(items, null, 2)}\n`);

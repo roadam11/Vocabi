@@ -1,127 +1,132 @@
 [
   {
-    "id": "B1-air",
-    "lemma": "air",
+    "id": "B1-ago",
+    "lemma": "ago",
     "band": "B1"
   },
   {
-    "id": "B1-contract",
-    "lemma": "contract",
+    "id": "B1-amount",
+    "lemma": "amount",
     "band": "B1"
   },
   {
-    "id": "B1-court",
-    "lemma": "court",
+    "id": "B1-announce",
+    "lemma": "announce",
     "band": "B1"
   },
   {
-    "id": "B1-detail",
-    "lemma": "detail",
+    "id": "B1-award",
+    "lemma": "award",
     "band": "B1"
   },
   {
-    "id": "B1-different",
-    "lemma": "different",
+    "id": "B1-bear",
+    "lemma": "bear",
     "band": "B1"
   },
   {
-    "id": "B1-feel",
-    "lemma": "feel",
+    "id": "B1-buy",
+    "lemma": "buy",
     "band": "B1"
   },
   {
-    "id": "B1-field",
-    "lemma": "field",
+    "id": "B1-car",
+    "lemma": "car",
     "band": "B1"
   },
   {
-    "id": "B1-fill",
-    "lemma": "fill",
+    "id": "B1-currently",
+    "lemma": "currently",
     "band": "B1"
   },
   {
-    "id": "B1-finish",
-    "lemma": "finish",
+    "id": "B1-daily",
+    "lemma": "daily",
     "band": "B1"
   },
   {
-    "id": "B1-hold",
-    "lemma": "hold",
+    "id": "B1-dark",
+    "lemma": "dark",
     "band": "B1"
   },
   {
-    "id": "B1-include",
-    "lemma": "include",
+    "id": "B1-exist",
+    "lemma": "exist",
     "band": "B1"
   },
   {
-    "id": "B1-increase",
-    "lemma": "increase",
+    "id": "B1-forward",
+    "lemma": "forward",
     "band": "B1"
   },
   {
-    "id": "B1-key",
-    "lemma": "key",
+    "id": "B1-get",
+    "lemma": "get",
     "band": "B1"
   },
   {
-    "id": "B1-likely",
-    "lemma": "likely",
+    "id": "B1-health",
+    "lemma": "health",
     "band": "B1"
   },
   {
-    "id": "B1-lot",
-    "lemma": "lot",
+    "id": "B1-here",
+    "lemma": "here",
     "band": "B1"
   },
   {
-    "id": "B1-natural",
-    "lemma": "natural",
+    "id": "B1-less",
+    "lemma": "less",
     "band": "B1"
   },
   {
-    "id": "B1-purpose",
-    "lemma": "purpose",
+    "id": "B1-level",
+    "lemma": "level",
     "band": "B1"
   },
   {
-    "id": "B1-real",
-    "lemma": "real",
+    "id": "B1-lose",
+    "lemma": "lose",
     "band": "B1"
   },
   {
-    "id": "B1-rule",
-    "lemma": "rule",
+    "id": "B1-must",
+    "lemma": "must",
     "band": "B1"
   },
   {
-    "id": "B1-sell",
-    "lemma": "sell",
+    "id": "B1-near",
+    "lemma": "near",
     "band": "B1"
   },
   {
-    "id": "B1-spend",
-    "lemma": "spend",
+    "id": "B1-nothing",
+    "lemma": "nothing",
     "band": "B1"
   },
   {
-    "id": "B1-standard",
-    "lemma": "standard",
+    "id": "B1-out",
+    "lemma": "out",
     "band": "B1"
   },
   {
-    "id": "B1-strike",
-    "lemma": "strike",
+    "id": "B1-remove",
+    "lemma": "remove",
     "band": "B1"
   },
   {
-    "id": "B1-subject",
-    "lemma": "subject",
+    "id": "B1-rise",
+    "lemma": "rise",
     "band": "B1"
   },
   {
-    "id": "B1-too",
-    "lemma": "too",
+    "id": "B1-sea",
+    "lemma": "sea",
+    "band": "B1"
+  },
+  {
+    "id": "B1-side",
+    "lemma": "side",
     "band": "B1"
   },
   {
@@ -130,218 +135,238 @@
     "band": "B1"
   },
   {
-    "id": "B1-treatment",
-    "lemma": "treatment",
+    "id": "B1-unit",
+    "lemma": "unit",
     "band": "B1"
   },
   {
-    "id": "B1-voice",
-    "lemma": "voice",
+    "id": "B1-whatever",
+    "lemma": "whatever",
     "band": "B1"
   },
   {
-    "id": "B1-walk",
-    "lemma": "walk",
+    "id": "B1-will",
+    "lemma": "will",
     "band": "B1"
   },
   {
-    "id": "B1-white",
-    "lemma": "white",
-    "band": "B1"
-  },
-  {
-    "id": "B2-alive",
-    "lemma": "alive",
+    "id": "B2-accuse",
+    "lemma": "accuse",
     "band": "B2"
   },
   {
-    "id": "B2-besides",
-    "lemma": "besides",
+    "id": "B2-adult",
+    "lemma": "adult",
     "band": "B2"
   },
   {
-    "id": "B2-chicken",
-    "lemma": "chicken",
+    "id": "B2-assembly",
+    "lemma": "assembly",
     "band": "B2"
   },
   {
-    "id": "B2-circle",
-    "lemma": "circle",
+    "id": "B2-cook",
+    "lemma": "cook",
     "band": "B2"
   },
   {
-    "id": "B2-compete",
-    "lemma": "compete",
+    "id": "B2-coverage",
+    "lemma": "coverage",
     "band": "B2"
   },
   {
-    "id": "B2-competition",
-    "lemma": "competition",
+    "id": "B2-decline",
+    "lemma": "decline",
     "band": "B2"
   },
   {
-    "id": "B2-concept",
-    "lemma": "concept",
+    "id": "B2-disease",
+    "lemma": "disease",
     "band": "B2"
   },
   {
-    "id": "B2-contribute",
-    "lemma": "contribute",
+    "id": "B2-display",
+    "lemma": "display",
     "band": "B2"
   },
   {
-    "id": "B2-counter",
-    "lemma": "counter",
+    "id": "B2-dry",
+    "lemma": "dry",
     "band": "B2"
   },
   {
-    "id": "B2-declare",
-    "lemma": "declare",
+    "id": "B2-estimate",
+    "lemma": "estimate",
     "band": "B2"
   },
   {
-    "id": "B2-despite",
-    "lemma": "despite",
+    "id": "B2-flag",
+    "lemma": "flag",
     "band": "B2"
   },
   {
-    "id": "B2-edge",
-    "lemma": "edge",
+    "id": "B2-frank",
+    "lemma": "frank",
     "band": "B2"
   },
   {
-    "id": "B2-escape",
-    "lemma": "escape",
+    "id": "B2-global",
+    "lemma": "global",
     "band": "B2"
   },
   {
-    "id": "B2-gather",
-    "lemma": "gather",
+    "id": "B2-intend",
+    "lemma": "intend",
     "band": "B2"
   },
   {
-    "id": "B2-hat",
-    "lemma": "hat",
+    "id": "B2-investigation",
+    "lemma": "investigation",
     "band": "B2"
   },
   {
-    "id": "B2-instance",
-    "lemma": "instance",
+    "id": "B2-mail",
+    "lemma": "mail",
     "band": "B2"
   },
   {
-    "id": "B2-institute",
-    "lemma": "institute",
+    "id": "B2-mate",
+    "lemma": "mate",
     "band": "B2"
   },
   {
-    "id": "B2-jail",
-    "lemma": "jail",
+    "id": "B2-mayor",
+    "lemma": "mayor",
     "band": "B2"
   },
   {
-    "id": "B2-literally",
-    "lemma": "literally",
+    "id": "B2-nearly",
+    "lemma": "nearly",
     "band": "B2"
   },
   {
-    "id": "B2-map",
-    "lemma": "map",
+    "id": "B2-necessary",
+    "lemma": "necessary",
     "band": "B2"
   },
   {
-    "id": "B2-moon",
-    "lemma": "moon",
+    "id": "B2-powerful",
+    "lemma": "powerful",
     "band": "B2"
   },
   {
-    "id": "B2-ourselves",
-    "lemma": "ourselves",
+    "id": "B2-pure",
+    "lemma": "pure",
     "band": "B2"
   },
   {
-    "id": "B2-pitch",
-    "lemma": "pitch",
+    "id": "B2-reject",
+    "lemma": "reject",
     "band": "B2"
   },
   {
-    "id": "B2-pocket",
-    "lemma": "pocket",
+    "id": "B2-sentence",
+    "lemma": "sentence",
     "band": "B2"
   },
   {
-    "id": "B2-prison",
-    "lemma": "prison",
+    "id": "B2-snow",
+    "lemma": "snow",
     "band": "B2"
   },
   {
-    "id": "B2-propose",
-    "lemma": "propose",
+    "id": "B2-stupid",
+    "lemma": "stupid",
     "band": "B2"
   },
   {
-    "id": "B2-refuse",
-    "lemma": "refuse",
+    "id": "B2-supreme",
+    "lemma": "supreme",
     "band": "B2"
   },
   {
-    "id": "B2-relative",
-    "lemma": "relative",
+    "id": "B2-twenty",
+    "lemma": "twenty",
     "band": "B2"
   },
   {
-    "id": "B2-urban",
-    "lemma": "urban",
+    "id": "B2-wing",
+    "lemma": "wing",
     "band": "B2"
   },
   {
-    "id": "B2-wash",
-    "lemma": "wash",
+    "id": "B2-yellow",
+    "lemma": "yellow",
     "band": "B2"
   },
   {
-    "id": "B3-accomplish",
-    "lemma": "accomplish",
+    "id": "B3-acknowledge",
+    "lemma": "acknowledge",
     "band": "B3"
   },
   {
-    "id": "B3-adjust",
-    "lemma": "adjust",
+    "id": "B3-assault",
+    "lemma": "assault",
     "band": "B3"
   },
   {
-    "id": "B3-badly",
-    "lemma": "badly",
+    "id": "B3-blast",
+    "lemma": "blast",
     "band": "B3"
   },
   {
-    "id": "B3-bedroom",
-    "lemma": "bedroom",
+    "id": "B3-bush",
+    "lemma": "bush",
     "band": "B3"
   },
   {
-    "id": "B3-cite",
-    "lemma": "cite",
+    "id": "B3-coin",
+    "lemma": "coin",
     "band": "B3"
   },
   {
-    "id": "B3-concentration",
-    "lemma": "concentration",
+    "id": "B3-creature",
+    "lemma": "creature",
     "band": "B3"
   },
   {
-    "id": "B3-database",
-    "lemma": "database",
+    "id": "B3-delete",
+    "lemma": "delete",
     "band": "B3"
   },
   {
-    "id": "B3-downtown",
-    "lemma": "downtown",
+    "id": "B3-destruction",
+    "lemma": "destruction",
     "band": "B3"
   },
   {
-    "id": "B3-float",
-    "lemma": "float",
+    "id": "B3-distinguish",
+    "lemma": "distinguish",
+    "band": "B3"
+  },
+  {
+    "id": "B3-drag",
+    "lemma": "drag",
+    "band": "B3"
+  },
+  {
+    "id": "B3-duke",
+    "lemma": "duke",
+    "band": "B3"
+  },
+  {
+    "id": "B3-entertain",
+    "lemma": "entertain",
+    "band": "B3"
+  },
+  {
+    "id": "B3-exit",
+    "lemma": "exit",
+    "band": "B3"
+  },
+  {
+    "id": "B3-fairly",
+    "lemma": "fairly",
     "band": "B3"
   },
   {
@@ -350,68 +375,53 @@
     "band": "B3"
   },
   {
-    "id": "B3-naked",
-    "lemma": "naked",
+    "id": "B3-illustrate",
+    "lemma": "illustrate",
     "band": "B3"
   },
   {
-    "id": "B3-naturally",
-    "lemma": "naturally",
+    "id": "B3-lend",
+    "lemma": "lend",
     "band": "B3"
   },
   {
-    "id": "B3-output",
-    "lemma": "output",
+    "id": "B3-loop",
+    "lemma": "loop",
     "band": "B3"
   },
   {
-    "id": "B3-philosophy",
-    "lemma": "philosophy",
+    "id": "B3-outstanding",
+    "lemma": "outstanding",
     "band": "B3"
   },
   {
-    "id": "B3-pin",
-    "lemma": "pin",
+    "id": "B3-provision",
+    "lemma": "provision",
     "band": "B3"
   },
   {
-    "id": "B3-priority",
-    "lemma": "priority",
+    "id": "B3-reduction",
+    "lemma": "reduction",
     "band": "B3"
   },
   {
-    "id": "B3-rapid",
-    "lemma": "rapid",
+    "id": "B3-regret",
+    "lemma": "regret",
     "band": "B3"
   },
   {
-    "id": "B3-reporter",
-    "lemma": "reporter",
+    "id": "B3-rural",
+    "lemma": "rural",
     "band": "B3"
   },
   {
-    "id": "B3-respectively",
-    "lemma": "respectively",
+    "id": "B3-scan",
+    "lemma": "scan",
     "band": "B3"
   },
   {
-    "id": "B3-sand",
-    "lemma": "sand",
-    "band": "B3"
-  },
-  {
-    "id": "B3-satisfy",
-    "lemma": "satisfy",
-    "band": "B3"
-  },
-  {
-    "id": "B3-scary",
-    "lemma": "scary",
-    "band": "B3"
-  },
-  {
-    "id": "B3-script",
-    "lemma": "script",
+    "id": "B3-segment",
+    "lemma": "segment",
     "band": "B3"
   },
   {
@@ -420,178 +430,168 @@
     "band": "B3"
   },
   {
-    "id": "B3-silence",
-    "lemma": "silence",
+    "id": "B3-significantly",
+    "lemma": "significantly",
     "band": "B3"
   },
   {
-    "id": "B3-sin",
-    "lemma": "sin",
+    "id": "B3-spider",
+    "lemma": "spider",
     "band": "B3"
   },
   {
-    "id": "B3-spiritual",
-    "lemma": "spiritual",
+    "id": "B3-thick",
+    "lemma": "thick",
     "band": "B3"
   },
   {
-    "id": "B3-therapy",
-    "lemma": "therapy",
+    "id": "B3-venture",
+    "lemma": "venture",
     "band": "B3"
   },
   {
-    "id": "B3-upgrade",
-    "lemma": "upgrade",
-    "band": "B3"
-  },
-  {
-    "id": "B3-widely",
-    "lemma": "widely",
-    "band": "B3"
-  },
-  {
-    "id": "B4-absent",
-    "lemma": "absent",
+    "id": "B4-anticipate",
+    "lemma": "anticipate",
     "band": "B4"
   },
   {
-    "id": "B4-acceptance",
-    "lemma": "acceptance",
+    "id": "B4-awake",
+    "lemma": "awake",
     "band": "B4"
   },
   {
-    "id": "B4-chef",
-    "lemma": "chef",
+    "id": "B4-bio",
+    "lemma": "bio",
     "band": "B4"
   },
   {
-    "id": "B4-dancer",
-    "lemma": "dancer",
+    "id": "B4-bride",
+    "lemma": "bride",
     "band": "B4"
   },
   {
-    "id": "B4-ego",
-    "lemma": "ego",
+    "id": "B4-conscience",
+    "lemma": "conscience",
     "band": "B4"
   },
   {
-    "id": "B4-flexible",
-    "lemma": "flexible",
+    "id": "B4-cotton",
+    "lemma": "cotton",
     "band": "B4"
   },
   {
-    "id": "B4-inflation",
-    "lemma": "inflation",
+    "id": "B4-courtesy",
+    "lemma": "courtesy",
     "band": "B4"
   },
   {
-    "id": "B4-inn",
-    "lemma": "inn",
+    "id": "B4-curtain",
+    "lemma": "curtain",
     "band": "B4"
   },
   {
-    "id": "B4-innovative",
-    "lemma": "innovative",
+    "id": "B4-diplomatic",
+    "lemma": "diplomatic",
     "band": "B4"
   },
   {
-    "id": "B4-intact",
-    "lemma": "intact",
+    "id": "B4-goodbye",
+    "lemma": "goodbye",
     "band": "B4"
   },
   {
-    "id": "B4-interpretation",
-    "lemma": "interpretation",
+    "id": "B4-lap",
+    "lemma": "lap",
     "band": "B4"
   },
   {
-    "id": "B4-journalism",
-    "lemma": "journalism",
+    "id": "B4-mutual",
+    "lemma": "mutual",
     "band": "B4"
   },
   {
-    "id": "B4-jungle",
-    "lemma": "jungle",
+    "id": "B4-notify",
+    "lemma": "notify",
     "band": "B4"
   },
   {
-    "id": "B4-lottery",
-    "lemma": "lottery",
+    "id": "B4-organizer",
+    "lemma": "organizer",
     "band": "B4"
   },
   {
-    "id": "B4-lounge",
-    "lemma": "lounge",
+    "id": "B4-participation",
+    "lemma": "participation",
     "band": "B4"
   },
   {
-    "id": "B4-passionate",
-    "lemma": "passionate",
+    "id": "B4-prescription",
+    "lemma": "prescription",
     "band": "B4"
   },
   {
-    "id": "B4-pioneer",
-    "lemma": "pioneer",
+    "id": "B4-recreation",
+    "lemma": "recreation",
     "band": "B4"
   },
   {
-    "id": "B4-publicly",
-    "lemma": "publicly",
+    "id": "B4-revision",
+    "lemma": "revision",
     "band": "B4"
   },
   {
-    "id": "B4-purple",
-    "lemma": "purple",
+    "id": "B4-rubber",
+    "lemma": "rubber",
     "band": "B4"
   },
   {
-    "id": "B4-remainder",
-    "lemma": "remainder",
+    "id": "B4-sock",
+    "lemma": "sock",
     "band": "B4"
   },
   {
-    "id": "B4-revise",
-    "lemma": "revise",
+    "id": "B4-spa",
+    "lemma": "spa",
     "band": "B4"
   },
   {
-    "id": "B4-satisfaction",
-    "lemma": "satisfaction",
+    "id": "B4-spur",
+    "lemma": "spur",
     "band": "B4"
   },
   {
-    "id": "B4-shark",
-    "lemma": "shark",
+    "id": "B4-submission",
+    "lemma": "submission",
     "band": "B4"
   },
   {
-    "id": "B4-suite",
-    "lemma": "suite",
+    "id": "B4-trademark",
+    "lemma": "trademark",
     "band": "B4"
   },
   {
-    "id": "B4-thou",
-    "lemma": "thou",
+    "id": "B4-unbelievable",
+    "lemma": "unbelievable",
     "band": "B4"
   },
   {
-    "id": "B4-twelve",
-    "lemma": "twelve",
+    "id": "B4-useless",
+    "lemma": "useless",
     "band": "B4"
   },
   {
-    "id": "B4-uncomfortable",
-    "lemma": "uncomfortable",
+    "id": "B4-vulnerable",
+    "lemma": "vulnerable",
     "band": "B4"
   },
   {
-    "id": "B4-vinyl",
-    "lemma": "vinyl",
+    "id": "B4-waist",
+    "lemma": "waist",
     "band": "B4"
   },
   {
-    "id": "B4-voltage",
-    "lemma": "voltage",
+    "id": "B4-weakness",
+    "lemma": "weakness",
     "band": "B4"
   },
   {
@@ -600,93 +600,48 @@
     "band": "B4"
   },
   {
-    "id": "B5-baggage",
-    "lemma": "baggage",
+    "id": "B5-alternatively",
+    "lemma": "alternatively",
     "band": "B5"
   },
   {
-    "id": "B5-barber",
-    "lemma": "barber",
+    "id": "B5-beverage",
+    "lemma": "beverage",
     "band": "B5"
   },
   {
-    "id": "B5-blink",
-    "lemma": "blink",
+    "id": "B5-cedar",
+    "lemma": "cedar",
     "band": "B5"
   },
   {
-    "id": "B5-brew",
-    "lemma": "brew",
+    "id": "B5-cockpit",
+    "lemma": "cockpit",
     "band": "B5"
   },
   {
-    "id": "B5-concession",
-    "lemma": "concession",
+    "id": "B5-erupt",
+    "lemma": "erupt",
     "band": "B5"
   },
   {
-    "id": "B5-culminate",
-    "lemma": "culminate",
+    "id": "B5-fierce",
+    "lemma": "fierce",
     "band": "B5"
   },
   {
-    "id": "B5-diaper",
-    "lemma": "diaper",
+    "id": "B5-handmade",
+    "lemma": "handmade",
     "band": "B5"
   },
   {
-    "id": "B5-expire",
-    "lemma": "expire",
+    "id": "B5-hay",
+    "lemma": "hay",
     "band": "B5"
   },
   {
-    "id": "B5-fallout",
-    "lemma": "fallout",
-    "band": "B5"
-  },
-  {
-    "id": "B5-fetch",
-    "lemma": "fetch",
-    "band": "B5"
-  },
-  {
-    "id": "B5-flu",
-    "lemma": "flu",
-    "band": "B5"
-  },
-  {
-    "id": "B5-forensic",
-    "lemma": "forensic",
-    "band": "B5"
-  },
-  {
-    "id": "B5-gluten",
-    "lemma": "gluten",
-    "band": "B5"
-  },
-  {
-    "id": "B5-hare",
-    "lemma": "hare",
-    "band": "B5"
-  },
-  {
-    "id": "B5-header",
-    "lemma": "header",
-    "band": "B5"
-  },
-  {
-    "id": "B5-inaccurate",
-    "lemma": "inaccurate",
-    "band": "B5"
-  },
-  {
-    "id": "B5-infamous",
-    "lemma": "infamous",
-    "band": "B5"
-  },
-  {
-    "id": "B5-inherit",
-    "lemma": "inherit",
+    "id": "B5-inland",
+    "lemma": "inland",
     "band": "B5"
   },
   {
@@ -695,63 +650,108 @@
     "band": "B5"
   },
   {
-    "id": "B5-longtime",
-    "lemma": "longtime",
+    "id": "B5-lawful",
+    "lemma": "lawful",
     "band": "B5"
   },
   {
-    "id": "B5-mutually",
-    "lemma": "mutually",
+    "id": "B5-locality",
+    "lemma": "locality",
     "band": "B5"
   },
   {
-    "id": "B5-portable",
-    "lemma": "portable",
+    "id": "B5-lust",
+    "lemma": "lust",
     "band": "B5"
   },
   {
-    "id": "B5-quota",
-    "lemma": "quota",
+    "id": "B5-madame",
+    "lemma": "madame",
     "band": "B5"
   },
   {
-    "id": "B5-restructure",
-    "lemma": "restructure",
+    "id": "B5-mattress",
+    "lemma": "mattress",
     "band": "B5"
   },
   {
-    "id": "B5-socialism",
-    "lemma": "socialism",
+    "id": "B5-peanut",
+    "lemma": "peanut",
     "band": "B5"
   },
   {
-    "id": "B5-spectator",
-    "lemma": "spectator",
+    "id": "B5-perk",
+    "lemma": "perk",
     "band": "B5"
   },
   {
-    "id": "B5-splash",
-    "lemma": "splash",
+    "id": "B5-podium",
+    "lemma": "podium",
     "band": "B5"
   },
   {
-    "id": "B5-taxation",
-    "lemma": "taxation",
+    "id": "B5-postcard",
+    "lemma": "postcard",
     "band": "B5"
   },
   {
-    "id": "B5-unacceptable",
-    "lemma": "unacceptable",
+    "id": "B5-proximity",
+    "lemma": "proximity",
     "band": "B5"
   },
   {
-    "id": "B5-woo",
-    "lemma": "woo",
+    "id": "B5-pumpkin",
+    "lemma": "pumpkin",
     "band": "B5"
   },
   {
-    "id": "ACAD-accurately",
-    "lemma": "accurately",
+    "id": "B5-rectangular",
+    "lemma": "rectangular",
+    "band": "B5"
+  },
+  {
+    "id": "B5-rehearsal",
+    "lemma": "rehearsal",
+    "band": "B5"
+  },
+  {
+    "id": "B5-resonance",
+    "lemma": "resonance",
+    "band": "B5"
+  },
+  {
+    "id": "B5-sedan",
+    "lemma": "sedan",
+    "band": "B5"
+  },
+  {
+    "id": "B5-speedy",
+    "lemma": "speedy",
+    "band": "B5"
+  },
+  {
+    "id": "B5-straighten",
+    "lemma": "straighten",
+    "band": "B5"
+  },
+  {
+    "id": "B5-temptation",
+    "lemma": "temptation",
+    "band": "B5"
+  },
+  {
+    "id": "B5-theatrical",
+    "lemma": "theatrical",
+    "band": "B5"
+  },
+  {
+    "id": "B5-thriller",
+    "lemma": "thriller",
+    "band": "B5"
+  },
+  {
+    "id": "ACAD-affirm",
+    "lemma": "affirm",
     "band": "ACAD"
   },
   {
@@ -760,88 +760,103 @@
     "band": "ACAD"
   },
   {
-    "id": "ACAD-autonomy",
-    "lemma": "autonomy",
+    "id": "ACAD-comparative",
+    "lemma": "comparative",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-chemotherapy",
-    "lemma": "chemotherapy",
+    "id": "ACAD-deliberately",
+    "lemma": "deliberately",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-commodity",
-    "lemma": "commodity",
+    "id": "ACAD-elementary",
+    "lemma": "elementary",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-contradictory",
-    "lemma": "contradictory",
+    "id": "ACAD-estimation",
+    "lemma": "estimation",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-correctly",
-    "lemma": "correctly",
+    "id": "ACAD-evident",
+    "lemma": "evident",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-diagnosis",
-    "lemma": "diagnosis",
+    "id": "ACAD-fundamentally",
+    "lemma": "fundamentally",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-dimensional",
-    "lemma": "dimensional",
+    "id": "ACAD-generalization",
+    "lemma": "generalization",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-economically",
-    "lemma": "economically",
+    "id": "ACAD-gravity",
+    "lemma": "gravity",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-fluid",
-    "lemma": "fluid",
+    "id": "ACAD-hydrogen",
+    "lemma": "hydrogen",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-gauge",
-    "lemma": "gauge",
+    "id": "ACAD-identification",
+    "lemma": "identification",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-intermediate",
-    "lemma": "intermediate",
+    "id": "ACAD-infinite",
+    "lemma": "infinite",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-linguistic",
-    "lemma": "linguistic",
+    "id": "ACAD-insect",
+    "lemma": "insect",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-manipulation",
-    "lemma": "manipulation",
+    "id": "ACAD-insert",
+    "lemma": "insert",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-mortality",
-    "lemma": "mortality",
+    "id": "ACAD-interfere",
+    "lemma": "interfere",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-nonetheless",
-    "lemma": "nonetheless",
+    "id": "ACAD-liable",
+    "lemma": "liable",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-novice",
-    "lemma": "novice",
+    "id": "ACAD-minimal",
+    "lemma": "minimal",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-parcel",
-    "lemma": "parcel",
+    "id": "ACAD-nitrogen",
+    "lemma": "nitrogen",
+    "band": "ACAD"
+  },
+  {
+    "id": "ACAD-node",
+    "lemma": "node",
+    "band": "ACAD"
+  },
+  {
+    "id": "ACAD-philosophical",
+    "lemma": "philosophical",
+    "band": "ACAD"
+  },
+  {
+    "id": "ACAD-phonological",
+    "lemma": "phonological",
     "band": "ACAD"
   },
   {
@@ -855,38 +870,18 @@
     "band": "ACAD"
   },
   {
-    "id": "ACAD-prejudice",
-    "lemma": "prejudice",
+    "id": "ACAD-politically",
+    "lemma": "politically",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-semantic",
-    "lemma": "semantic",
+    "id": "ACAD-randomly",
+    "lemma": "randomly",
     "band": "ACAD"
   },
   {
-    "id": "ACAD-simulate",
-    "lemma": "simulate",
-    "band": "ACAD"
-  },
-  {
-    "id": "ACAD-slot",
-    "lemma": "slot",
-    "band": "ACAD"
-  },
-  {
-    "id": "ACAD-solvent",
-    "lemma": "solvent",
-    "band": "ACAD"
-  },
-  {
-    "id": "ACAD-sphere",
-    "lemma": "sphere",
-    "band": "ACAD"
-  },
-  {
-    "id": "ACAD-stereotype",
-    "lemma": "stereotype",
+    "id": "ACAD-stabilize",
+    "lemma": "stabilize",
     "band": "ACAD"
   },
   {
@@ -895,8 +890,13 @@
     "band": "ACAD"
   },
   {
-    "id": "ACAD-uplift",
-    "lemma": "uplift",
+    "id": "ACAD-undermine",
+    "lemma": "undermine",
+    "band": "ACAD"
+  },
+  {
+    "id": "ACAD-validity",
+    "lemma": "validity",
     "band": "ACAD"
   }
 ]

@@ -3,11 +3,7 @@
  * (check.ts) and the tests (validate.test.ts) both call runCheck / validateContent.
  */
 import { isEligibleRecognitionDistractor } from "../../src/engine/distractors";
-import {
-  glossesCollide,
-  normalizeEn,
-  normalizeEnLoose,
-} from "../../src/engine/text";
+import { glossesCollide, normalizeEn, normalizeEnLoose } from "../../src/engine/text";
 import { readContent, type RawContent, type RawRecord } from "../../src/content/read";
 import {
   LexiconEntry,

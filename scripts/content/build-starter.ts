@@ -18,7 +18,15 @@ import {
   REFERENCE_DIR,
   SOURCES,
 } from "./sources";
-import { type Candidate, selectStarter, type Source, starterCsv } from "./starter";
+import {
+  type Candidate,
+  cleanHint,
+  noaLemma,
+  phraseStats,
+  selectStarter,
+  type Source,
+  starterCsv,
+} from "./starter";
 
 const TARGET = 150;
 const NGSL_EXCLUDE_TOP = 1000;
@@ -76,7 +84,14 @@ const ngslTop = new Set(
 const noaHeadwords = readFileSync(join(REFERENCE_DIR, "candidates/noa.txt"), "utf8")
   .split("\n")
   .filter((l) => l && !l.startsWith("#"));
-const noa = new Map(noaHeadwords.map((h) => [h, isPhrase(h) ? h : toLemma(h)]));
+const listedHeads = new Set([...nawl, ...cefrj.map((e) => e.headword)]);
+const noa = new Map(
+  noaHeadwords.map((h) => {
+    if (isPhrase(h)) return [h, h];
+    const l = toLemma(h);
+    return [h, noaLemma(l, lemmaRow.get(l)?.formOf, listedHeads)];
+  }),
+);
 
 // POS: NAWL definition, else CEFR-J, else the WordNet POS with the most senses.
 const NAWL_POS: Record<string, Pos> = {
@@ -135,15 +150,21 @@ for (const [lemma, src] of [...sources].sort(([a], [b]) => (a < b ? -1 : 1))) {
     excluded.push({ lemma, why: "no usable POS (prefix, determiner, pronoun, unknown)" });
     continue;
   }
-  const head = isPhrase(lemma) ? toLemma(lemma.split(" ")[0]!) : lemma;
-  const row = lemmaRow.get(lemma) ?? lemmaRow.get(head);
+  const stats = isPhrase(lemma)
+    ? phraseStats(
+        lemma.split(" ").map((w) => {
+          const l = toLemma(w);
+          return { freq: lemmaRow.get(l)?.freq ?? 0, band: band.get(l) };
+        }),
+      )
+    : { freq: lemmaRow.get(lemma)?.freq ?? 0, band: band.get(lemma) ?? "B5" };
   candidates.push({
     lemma,
     pos,
-    hint: defs.get(lemma)?.def ?? "",
-    freq: row?.freq ?? 0,
+    hint: cleanHint(defs.get(lemma)?.def ?? ""),
+    freq: stats.freq,
     rank: lemmaRow.get(lemma)?.rank ?? null,
-    band: band.get(lemma) ?? "B5",
+    band: stats.band,
     sources: src,
   });
 }

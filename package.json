@@ -53,7 +53,8 @@
     "tsx": "^4.23.15",
     "typescript": "~5.9.3",
     "vitest": "^5.0.3",
-    "wink-lemmatizer": "3.0.4"
+    "wink-lemmatizer": "3.0.4",
+    "wink-lexicon": "2.2.0"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged && pnpm typecheck"

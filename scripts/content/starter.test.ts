@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { type Candidate, selectStarter, type Source, starterCsv } from "./starter";
+import {
+  type Candidate,
+  cleanHint,
+  noaLemma,
+  phraseStats,
+  selectStarter,
+  type Source,
+  starterCsv,
+} from "./starter";
 
 const c = (
   lemma: string,
@@ -67,5 +75,41 @@ describe("selectStarter (tiered)", () => {
     expect(starterCsv(rows)).toBe(
       'lemma,pos,sense_hint,band,rank,sources\ngauge,v,"a ""measure"", tool",B5,9001,nawl|noa\n',
     );
+  });
+});
+
+describe("starter edge cases", () => {
+  it("a phrase is as rare as its rarest word, so it never outranks a rarer single word by its 'in'", () => {
+    const inVain = phraseStats([
+      { freq: 0.02, band: "B1" }, // in
+      { freq: 0.00001, band: "B5" }, // vain
+    ]);
+    expect(inVain).toEqual({ freq: 0.00001, band: "B5" });
+    expect(
+      phraseStats([
+        { freq: 0.02, band: "B1" },
+        { freq: 0, band: undefined },
+      ]),
+    ).toEqual({
+      freq: 0,
+      band: "B5",
+    });
+    const picked = selectStarter(
+      [c("in vain", inVain.freq, ["noa"]), c("gauge", 0.0001, ["noa"])],
+      2,
+    );
+    expect(picked.map((r) => r.lemma)).toEqual(["gauge", "in vain"]);
+  });
+
+  it("maps a Noa form that is also a lemma to its lemma, unless a source list has it", () => {
+    expect(noaLemma("distorted", ["distort"], new Set())).toBe("distort");
+    expect(noaLemma("bound", ["bind"], new Set(["bound"]))).toBe("bound");
+    expect(noaLemma("vital", [], new Set())).toBe("vital");
+  });
+
+  it("drops spreadsheet error values from hints", () => {
+    expect(cleanHint("#NAME?")).toBe("");
+    expect(cleanHint("#N/A")).toBe("");
+    expect(cleanHint(" an agreement between nations ")).toBe("an agreement between nations");
   });
 });
