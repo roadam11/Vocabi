@@ -13,7 +13,10 @@ export type BankContext = {
   band: ReadonlyMap<string, Band>;
   /** NGSL ∪ NAWL ∪ CEFR-J headwords: proper-noun uses are fine for these (mark, bill). */
   listed: ReadonlySet<string>;
-  /** Offensive words and Hebrew loanwords every Israeli knows. */
+  /**
+   * Invalid items only (docs/DECISIONS.md #57): offensive words, and names/abbreviations WordNet
+   * does not flag. Never words a learner simply knows (loanwords): that would bias p_b.
+   */
   excluded: ReadonlySet<string>;
 };
 

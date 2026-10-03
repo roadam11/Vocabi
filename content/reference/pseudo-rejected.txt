@@ -1,0 +1,13 @@
+# Pseudowords rejected in human review (2026-10-03): never generated again (docs/DECISIONS.md #58).
+froashoule
+voarostage
+goabustage
+geeltunine
+speerleale
+wahustous
+rirkiltine
+skoususify
+struntuful
+saimuful
+beerkate
+brinoamp

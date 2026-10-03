@@ -44,7 +44,9 @@ WordNet "morphy" lemmatization of forms outside the NGSL/NAWL families, and the 
 
 ## Derived reference files
 - `lemmas-en.tsv` (`lemma, rank, freq, forms, formOf, proper`): 28,582 lemmas from the top 80,000 wordfreq forms. Method in `docs/DECISIONS.md` #51 and `scripts/content/lemmas.ts`: NGSL/NAWL families first, then dictionary base words, then morphy; British spellings fold to a more frequent American dictionary variant; contraction pieces are dropped; WordNet-only-capitalized words (proper nouns) are dropped unless listed; ranks by summed frequency, ties alphabetical.
-- `exclude-offensive.txt`, `exclude-he-loanwords.txt`, `exclude-names.txt`: curated by VOCABI for the placement bank (`docs/DECISIONS.md` #53); to be confirmed by Roie.
+- `exclude-offensive.txt`, `exclude-names.txt`: invalid placement items (offensive words; names, abbreviations and bound prefixes WordNet does not flag), curated by VOCABI (`docs/DECISIONS.md` #53, #57); to be confirmed by Roie. There is no loanword exclusion (#57).
+- `hebrew-names.txt`: common Israeli first names (Latin transliterations), curated by VOCABI; the pseudoword generator rejects candidates containing one (#58).
+- `pseudo-rejected.txt`: pseudowords rejected in human review, never generated again (#58).
 
 ## Noa's word list (private contribution)
 - **File:** `candidates/noa.txt` — 852 unique English headwords (910 headword lines, 57 duplicate lines removed: 54 headwords appear more than once, 4 of them only after normalization, plus "deffer" → defer, already listed). Extracted 2026-10-03 by `pnpm content:noa` from `review/input/noa.docx` (git-ignored).

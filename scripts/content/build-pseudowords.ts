@@ -1,12 +1,14 @@
 /**
- * `pnpm content:pseudowords` — writes content/placement/pseudo.json (COUNT pseudowords, ids
- * `p-<text>`) and review/pseudowords.csv (UTF-8 with BOM) for the human slang/brand/
- * other-language check (docs/DECISIONS.md #7). Run after content:placement: the placement lemmas
+ * `pnpm content:pseudowords` — tops content/placement/pseudo.json up to COUNT pseudowords (ids
+ * `p-<text>`): reviewed words are kept, those in content/reference/pseudo-rejected.txt are dropped
+ * and replaced, and only the new ones go to review/pseudowords.csv (UTF-8 with BOM) for the human
+ * slang/brand/other-language check (docs/DECISIONS.md #7, #58). Idempotent. Run after content:placement: the placement lemmas
  * count as content words for rule 9.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { readContent } from "../../src/content/read";
+import type { Pseudoword } from "../../src/content/schema";
 import { parseLemmaRows } from "./lemmas";
 import { pseudoContext } from "./pseudo-rule";
 import { generatePseudowords } from "./pseudowords";
@@ -34,14 +36,37 @@ const contentWords = readContent(join(ROOT, "content"))
 const rows = parseLemmaRows(readFileSync(join(REFERENCE_DIR, "lemmas-en.tsv"), "utf8"));
 const knownForms = new Set(rows.flatMap((r) => [r.lemma, ...r.forms]));
 
-const words = generatePseudowords(COUNT, SEED, pseudoContext(reference, contentWords), knownForms);
-const pseudo = words.map((text) => ({ id: `p-${text}`, text }));
+const lines = (file: string) =>
+  readFileSync(join(REFERENCE_DIR, file), "utf8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"));
+const rejected = new Set(lines("pseudo-rejected.txt"));
+const current = JSON.parse(
+  readFileSync(join(ROOT, "content/placement/pseudo.json"), "utf8"),
+) as Pseudoword[];
+// Reviewed words stay as they are; only rejected ones are replaced.
+const kept = current.map((p) => p.text).filter((t) => !rejected.has(t));
+const fresh = generatePseudowords(
+  COUNT - kept.length,
+  SEED,
+  pseudoContext(reference, contentWords),
+  {
+    knownForms,
+    commonWords: new Set(reference.filter((w) => /^[a-z]{4,}$/.test(w))),
+    names: lines("hebrew-names.txt"),
+    taken: [...kept, ...rejected],
+  },
+);
+const pseudo = [...kept, ...fresh].map((text) => ({ id: `p-${text}`, text }));
 writeFileSync(join(ROOT, "content/placement/pseudo.json"), `${JSON.stringify(pseudo, null, 2)}\n`);
 mkdirSync(join(ROOT, "review"), { recursive: true });
-writeFileSync(
-  join(ROOT, "review/pseudowords.csv"),
-  "﻿" +
-    ["id,text,decision,notes", ...pseudo.map((p) => `${p.id},${p.text},,`)].join("\r\n") +
-    "\r\n",
-);
-console.log(words.join(" "));
+if (fresh.length > 0) {
+  writeFileSync(
+    join(ROOT, "review/pseudowords.csv"),
+    "\uFEFF" +
+      ["id,text,decision,notes", ...fresh.map((t) => `p-${t},${t},,`)].join("\r\n") +
+      "\r\n",
+  );
+}
+console.log(`kept ${kept.length}, new ${fresh.length}: ${fresh.join(" ")}`);

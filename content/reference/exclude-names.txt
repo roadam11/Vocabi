@@ -1,16 +1,19 @@
-# Names, proper adjectives and abbreviations that WordNet does not flag; never placement items.
+# Names, proper adjectives, abbreviations and bound prefixes that WordNet does not flag: invalid yes/no items.
 # Curated for VOCABI (internal; to be confirmed by Roie).
+bio
 bobby
 carol
 christian
 chuck
 corp
-fella
+frank
 freeman
 gen
 hank
 khan
+madame
 malik
+non
 potter
 rev
 smith
